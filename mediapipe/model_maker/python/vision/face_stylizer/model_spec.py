@@ -58,6 +58,6 @@ class SupportedModels(enum.Enum):
   def get(cls, spec: 'SupportedModels') -> 'ModelSpec':
     """Gets model spec from the input enum and initializes it."""
     if spec not in cls:
-      raise TypeError('Unsupported face stylizer spec: {}'.format(spec))
+      raise TypeError(f'Unsupported face stylizer spec: {spec}')
 
     return spec.value()

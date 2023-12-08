@@ -94,9 +94,7 @@ class ObjectDetectorOptions:
   def to_pb2(self) -> _ObjectDetectorOptionsProto:
     """Generates an ObjectDetectorOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
     return _ObjectDetectorOptionsProto(
         base_options=base_options_proto,
         display_names_locale=self.display_names_locale,

@@ -93,7 +93,8 @@ class AudioClassifierOptions:
   def to_pb2(self) -> _AudioClassifierGraphOptionsProto:
     """Generates an AudioClassifierOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = False if self.running_mode == _RunningMode.AUDIO_CLIPS else True
+    base_options_proto.use_stream_mode = (self.running_mode !=
+                                          _RunningMode.AUDIO_CLIPS)
     classifier_options_proto = _ClassifierOptionsProto(
         score_threshold=self.score_threshold,
         category_allowlist=self.category_allowlist,

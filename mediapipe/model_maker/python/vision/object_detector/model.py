@@ -73,33 +73,30 @@ class ObjectDetectorModel(tf.keras.Model):
       self,
       generator_config: configs.retinanet.DetectionGenerator = configs.retinanet.DetectionGenerator(),
   ) -> configs.retinanet.RetinaNet:
-    model_config = configs.retinanet.RetinaNet(
+    return configs.retinanet.RetinaNet(
         min_level=self._model_spec.min_level,
         max_level=self._model_spec.max_level,
         num_classes=self._num_classes,
         input_size=self._model_spec.input_image_shape,
-        anchor=configs.retinanet.Anchor(
-            num_scales=3, aspect_ratios=[0.5, 1.0, 2.0], anchor_size=3
-        ),
+        anchor=configs.retinanet.Anchor(num_scales=3,
+                                        aspect_ratios=[0.5, 1.0, 2.0],
+                                        anchor_size=3),
         backbone=configs.backbones.Backbone(
             type='mobilenet',
             mobilenet=configs.backbones.MobileNet(
-                model_id=self._model_spec.model_id
-            ),
+                model_id=self._model_spec.model_id),
         ),
         decoder=configs.decoders.Decoder(
             type='fpn',
-            fpn=configs.decoders.FPN(
-                num_filters=128, use_separable_conv=True, use_keras_layer=True
-            ),
+            fpn=configs.decoders.FPN(num_filters=128,
+                                     use_separable_conv=True,
+                                     use_keras_layer=True),
         ),
-        head=configs.retinanet.RetinaNetHead(
-            num_filters=128, use_separable_conv=True
-        ),
+        head=configs.retinanet.RetinaNetHead(num_filters=128,
+                                             use_separable_conv=True),
         detection_generator=generator_config,
         norm_activation=configs.common.NormActivation(activation='relu6'),
     )
-    return model_config
 
   def _build_model(self, omit_l2=False) -> tf.keras.Model:
     """Builds a RetinaNet object detector model."""
@@ -313,8 +310,7 @@ class ObjectDetectorModel(tf.keras.Model):
 
     model_loss = cls_loss + 50 * box_loss
     total_loss = model_loss
-    regularization_losses = self._model.losses
-    if regularization_losses:
+    if regularization_losses := self._model.losses:
       reg_loss = tf.reduce_sum(regularization_losses)
       total_loss = model_loss + reg_loss
     all_losses = {

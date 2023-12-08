@@ -68,7 +68,7 @@ class TaskInfo:
 
     def add_stream_name_prefix(tag_index_name):
       splitted = tag_index_name.split(':')
-      splitted[-1] = 'throttled_' + splitted[-1]
+      splitted[-1] = f'throttled_{splitted[-1]}'
       return ':'.join(splitted)
 
     if not self.task_graph or not self.task_options:
@@ -101,7 +101,7 @@ class TaskInfo:
     task_subgraph_inputs = [
         add_stream_name_prefix(stream) for stream in self.input_streams
     ]
-    finished_stream = 'FINISHED:' + strip_tag_index(self.output_streams[0])
+    finished_stream = f'FINISHED:{strip_tag_index(self.output_streams[0])}'
     flow_limiter_options = calculator_options_pb2.CalculatorOptions()
     flow_limiter_options.Extensions[
         flow_limiter_calculator_pb2.FlowLimiterCalculatorOptions.ext].CopyFrom(

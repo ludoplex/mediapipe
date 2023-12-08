@@ -127,7 +127,7 @@ def _at_least_x_are_equal(a, b, x):
 
 def _resize_image(image, image_size, method=None):
   if method is not None:
-    tf.compat.v1.logging.info('Use customized resize method {}'.format(method))
+    tf.compat.v1.logging.info(f'Use customized resize method {method}')
     return tf.compat.v1.image.resize([image], [image_size, image_size],
                                      method)[0]
   tf.compat.v1.logging.info('Use default resize_bicubic.')

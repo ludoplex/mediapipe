@@ -109,16 +109,13 @@ class Detection:
       )
 
     if pb2_obj.location_data.relative_keypoints:
-      for idx, elem in enumerate(pb2_obj.location_data.relative_keypoints):
-        keypoints.append(
-            keypoint_module.NormalizedKeypoint(
-                x=elem.x,
-                y=elem.y,
-                label=elem.keypoint_label,
-                score=elem.score,
-            )
-        )
-
+      keypoints.extend(
+          keypoint_module.NormalizedKeypoint(
+              x=elem.x,
+              y=elem.y,
+              label=elem.keypoint_label,
+              score=elem.score,
+          ) for elem in pb2_obj.location_data.relative_keypoints)
     return Detection(
         bounding_box=bounding_box_module.BoundingBox.create_from_pb2(
             pb2_obj.location_data.bounding_box

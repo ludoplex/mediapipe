@@ -57,9 +57,9 @@ class ObjectronTest(parameterized.TestCase):
     image = cv2.imread(image_path)
 
     with mp_objectron.Objectron(
-        static_image_mode=static_image_mode,
-        max_num_objects=2,
-        min_detection_confidence=0.5) as objectron:
+          static_image_mode=static_image_mode,
+          max_num_objects=2,
+          min_detection_confidence=0.5) as objectron:
       for _ in range(num_frames):
         results = objectron.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         multi_box_coordinates = []
@@ -68,7 +68,7 @@ class ObjectronTest(parameterized.TestCase):
           self.assertLen(landmarks.landmark, 9)
           x = [landmark.x for landmark in landmarks.landmark]
           y = [landmark.y for landmark in landmarks.landmark]
-          box_coordinates = np.transpose(np.stack((y, x))) * image.shape[0:2]
+          box_coordinates = np.transpose(np.stack((y, x))) * image.shape[:2]
           multi_box_coordinates.append(box_coordinates)
         self.assertLen(multi_box_coordinates, 2)
         prediction_error = np.abs(

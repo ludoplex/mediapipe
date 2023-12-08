@@ -219,10 +219,11 @@ def get_default_face_mesh_iris_connections_style(
   Returns:
        A mapping from each iris connection to its default drawing spec.
   """
-  face_mesh_iris_connections_style = {}
   left_spec = DrawingSpec(color=_GREEN, thickness=_THICKNESS_CONTOURS)
-  for connection in face_mesh_connections.FACEMESH_LEFT_IRIS:
-    face_mesh_iris_connections_style[connection] = left_spec
+  face_mesh_iris_connections_style = {
+      connection: left_spec
+      for connection in face_mesh_connections.FACEMESH_LEFT_IRIS
+  }
   right_spec = DrawingSpec(color=_RED, thickness=_THICKNESS_CONTOURS)
   for connection in face_mesh_connections.FACEMESH_RIGHT_IRIS:
     face_mesh_iris_connections_style[connection] = right_spec
@@ -235,13 +236,14 @@ def get_default_pose_landmarks_style() -> Mapping[int, DrawingSpec]:
   Returns:
       A mapping from each pose landmark to its default drawing spec.
   """
-  pose_landmark_style = {}
   left_spec = DrawingSpec(
       color=(0, 138, 255), thickness=_THICKNESS_POSE_LANDMARKS)
   right_spec = DrawingSpec(
       color=(231, 217, 0), thickness=_THICKNESS_POSE_LANDMARKS)
-  for landmark in _POSE_LANDMARKS_LEFT:
-    pose_landmark_style[landmark] = left_spec
+  pose_landmark_style = {
+      landmark: left_spec
+      for landmark in _POSE_LANDMARKS_LEFT
+  }
   for landmark in _POSE_LANDMARKS_RIGHT:
     pose_landmark_style[landmark] = right_spec
   pose_landmark_style[PoseLandmark.NOSE] = DrawingSpec(

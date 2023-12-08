@@ -217,8 +217,7 @@ class ImagePerceptualQualityLoss(tf.keras.losses.Loss):
       l1_loss = self._l1_loss(reduction=self._reduction)(img1, img2)
       l1_loss_value = tf_utils.safe_mean(l1_loss * self._loss_weight.l1)
       loss_value.append(l1_loss_value)
-    total_loss = tf.math.add_n(loss_value)
-    return total_loss
+    return tf.math.add_n(loss_value)
 
 
 class PerceptualLoss(tf.keras.Model, metaclass=abc.ABCMeta):

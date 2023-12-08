@@ -267,7 +267,7 @@ class Objectron(SolutionBase):
   def _convert_format(
       self,
       inputs: annotation_data_pb2.FrameAnnotation) -> List[ObjectronOutputs]:
-    new_outputs = list()
+    new_outputs = []
     for annotation in inputs.annotations:
       # Get 3d object pose.
       rotation = np.reshape(np.array(annotation.rotation), (3, 3))

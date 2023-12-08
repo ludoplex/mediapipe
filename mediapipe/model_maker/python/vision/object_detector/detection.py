@@ -27,8 +27,7 @@ class DetectionModule(detection.DetectionModule):
 
   def serve(self, images) -> Mapping[str, Any]:
     result = super().serve(images)
-    final_outputs = {
+    return {
         'detection_boxes': result['detection_boxes'],
         'detection_scores': result['detection_scores'],
     }
-    return final_outputs

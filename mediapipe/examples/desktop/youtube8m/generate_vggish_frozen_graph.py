@@ -56,7 +56,7 @@ def create_vggish_frozen_graph():
         clear_devices=True,
         initializer_nodes=None)
   os.system('rm -rf models/')
-  os.system('rm %s' % ckpt_path)
+  os.system(f'rm {ckpt_path}')
 
 
 def main(argv):

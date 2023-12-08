@@ -48,10 +48,8 @@ def run(model_path, n_iterations, delegate):
             base_vision_benchmark_api.VISION_TEST_DATA_DIR, _IMAGE_FILE
         )
     )
-    inference_times = base_vision_benchmark_api.benchmark_task(
-        aligner.align, mp_image, n_iterations
-    )
-    return inference_times
+    return base_vision_benchmark_api.benchmark_task(aligner.align, mp_image,
+                                                    n_iterations)
 
 
 if __name__ == '__main__':

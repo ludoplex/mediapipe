@@ -178,8 +178,6 @@ class PreprocessorTest(tf.test.TestCase, parameterized.TestCase):
     return new_cf.cache_prefix_filename
 
   def test_bert_get_tfrecord_cache_files(self):
-    # Test to ensure regenerated cache_files have different prefixes
-    all_cf_prefixes = set()
     cf = cache_files.TFRecordCacheFiles(
         cache_prefix_filename='cache_prefix',
         cache_dir=self.get_temp_dir(),
@@ -187,9 +185,9 @@ class PreprocessorTest(tf.test.TestCase, parameterized.TestCase):
     )
     tokenizer = bert_tokenizer.SupportedBertTokenizers.FULL_TOKENIZER
     mobilebert_spec = model_spec.SupportedModels.MOBILEBERT_CLASSIFIER.value()
-    all_cf_prefixes.add(
+    all_cf_prefixes = {
         self._get_new_prefix(cf, mobilebert_spec, 5, True, tokenizer)
-    )
+    }
     all_cf_prefixes.add(
         self._get_new_prefix(cf, mobilebert_spec, 10, True, tokenizer)
     )

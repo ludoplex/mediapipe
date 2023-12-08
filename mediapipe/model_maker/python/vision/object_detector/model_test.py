@@ -28,10 +28,8 @@ from mediapipe.tasks.python.test import test_utils as task_test_utils
 
 
 def _dicts_match(dict_1, dict_2):
-  for key in dict_1:
-    if key not in dict_2 or np.any(dict_1[key] != dict_2[key]):
-      return False
-  return True
+  return not any(key not in dict_2 or np.any(dict_1[key] != dict_2[key])
+                 for key in dict_1)
 
 
 def _outputs_match(output1, output2):
@@ -65,10 +63,8 @@ class ObjectDetectorModelTest(tf.test.TestCase):
 
   def _create_model(self):
     model_options = model_opt.ObjectDetectorModelOptions()
-    model = model_lib.ObjectDetectorModel(
-        self.model_spec, model_options, self.data.num_classes
-    )
-    return model
+    return model_lib.ObjectDetectorModel(self.model_spec, model_options,
+                                         self.data.num_classes)
 
   def _train_model(self, model):
     """Helper to run a simple training run on the model."""
@@ -111,8 +107,8 @@ class ObjectDetectorModelTest(tf.test.TestCase):
     model = self._create_model()
     checkpoint_path = os.path.join(self.create_tempdir(), 'ckpt')
     model.save_checkpoint(checkpoint_path)
-    data_checkpoint_file = checkpoint_path + '.data-00000-of-00001'
-    index_checkpoint_file = checkpoint_path + '.index'
+    data_checkpoint_file = f'{checkpoint_path}.data-00000-of-00001'
+    index_checkpoint_file = f'{checkpoint_path}.index'
     self.assertTrue(os.path.exists(data_checkpoint_file))
     self.assertTrue(os.path.exists(index_checkpoint_file))
     self.assertGreater(os.path.getsize(data_checkpoint_file), 0)

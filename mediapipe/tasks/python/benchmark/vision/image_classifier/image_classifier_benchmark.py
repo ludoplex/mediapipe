@@ -44,17 +44,15 @@ def run(model_path, n_iterations, delegate):
   )
 
   with image_classifier.ImageClassifier.create_from_options(
-      options
-  ) as classifier:
+        options
+    ) as classifier:
     mp_image = image.Image.create_from_file(
         benchmark_utils.get_test_data_path(
             base_vision_benchmark_api.VISION_TEST_DATA_DIR, _IMAGE_FILE
         )
     )
-    inference_times = base_vision_benchmark_api.benchmark_task(
-        classifier.classify, mp_image, n_iterations
-    )
-    return inference_times
+    return base_vision_benchmark_api.benchmark_task(classifier.classify,
+                                                    mp_image, n_iterations)
 
 
 if __name__ == '__main__':

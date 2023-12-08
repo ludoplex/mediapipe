@@ -182,7 +182,7 @@ class AverageWordEmbeddingClassifierPreprocessor:
 
     if len(token_ids) < self._seq_len:
       pad_length = self._seq_len - len(token_ids)
-      token_ids = token_ids + pad_length * [pad_id]
+      token_ids += pad_length * [pad_id]
     else:
       token_ids = token_ids[:self._seq_len]
     return token_ids

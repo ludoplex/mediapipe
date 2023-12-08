@@ -74,8 +74,8 @@ class HandsTest(parameterized.TestCase):
           frame, hand_landmarks, mp_hands.HAND_CONNECTIONS,
           drawing_styles.get_default_hand_landmarks_style(),
           drawing_styles.get_default_hand_connections_style())
-    path = os.path.join(tempfile.gettempdir(), self.id().split('.')[-1] +
-                                              '_frame_{}.png'.format(idx))
+    path = os.path.join(tempfile.gettempdir(),
+                        (self.id().split('.')[-1] + f'_frame_{idx}.png'))
     cv2.imwrite(path, frame)
 
   def test_invalid_image_shape(self):
@@ -181,7 +181,7 @@ class HandsTest(parameterized.TestCase):
     video_path = os.path.join(os.path.dirname(__file__),
                               'testdata/asl_hand.25fps.mp4')
     expected_path = os.path.join(os.path.dirname(__file__),
-                                 'testdata/{}'.format(expected_name))
+                                 f'testdata/{expected_name}')
     actual, actual_world = self._process_video(model_complexity, video_path)
 
     # Dump actual .npz.
@@ -199,17 +199,17 @@ class HandsTest(parameterized.TestCase):
 
     # Validate actual vs. expected landmarks.
     expected = np.load(expected_path)['predictions']
-    assert actual.shape == expected.shape, (
-        'Unexpected shape of predictions: {} instead of {}'.format(
-            actual.shape, expected.shape))
+    assert (
+        actual.shape == expected.shape
+    ), f'Unexpected shape of predictions: {actual.shape} instead of {expected.shape}'
     self._assert_diff_less(
         actual[..., :2], expected[..., :2], threshold=diff_threshold)
 
     # Validate actual vs. expected world landmarks.
     expected_world = np.load(expected_path)['w_predictions']
-    assert actual_world.shape == expected_world.shape, (
-        'Unexpected shape of world predictions: {} instead of {}'.format(
-            actual_world.shape, expected_world.shape))
+    assert (
+        actual_world.shape == expected_world.shape
+    ), f'Unexpected shape of world predictions: {actual_world.shape} instead of {expected_world.shape}'
     self._assert_diff_less(
         actual_world, expected_world, threshold=world_diff_threshold)
 

@@ -132,7 +132,7 @@ def create_image_frame(data: Union[image_frame.ImageFrame, np.ndarray],
     # If copy arg is not set, copying the data if it's immutable. Otherwise,
     # take a reference of the immutable data to avoid data copy.
     if copy is None:
-      copy = True if data.flags.writeable else False
+      copy = bool(data.flags.writeable)
     if not copy:
       # TODO: Investigate why the first 2 bytes of the data has data
       # corruption when "data" is not c_contiguous.
@@ -230,7 +230,7 @@ def create_image(data: Union[image.Image, np.ndarray],
     # If copy arg is not set, copying the data if it's immutable. Otherwise,
     # take a reference of the immutable data to avoid data copy.
     if copy is None:
-      copy = True if data.flags.writeable else False
+      copy = bool(data.flags.writeable)
     if not copy:
       # TODO: Investigate why the first 2 bytes of the data has data
       # corruption when "data" is not c_contiguous.

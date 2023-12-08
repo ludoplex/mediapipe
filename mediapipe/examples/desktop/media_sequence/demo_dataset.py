@@ -149,7 +149,7 @@ class DemoDataset(object):
       }
 
     if split not in SPLITS:
-      raise ValueError("split '%s' is unknown." % split)
+      raise ValueError(f"split '{split}' is unknown.")
     all_shards = tf.io.gfile.glob(
         os.path.join(self.path_to_data, TF_RECORD_PATTERN % split + "-*-of-*"))
     if shuffle:
@@ -196,10 +196,7 @@ class DemoDataset(object):
           "mediapipe/graphs/media_sequence/.")
     logging.info("Downloading data.")
     tf.io.gfile.makedirs(self.path_to_data)
-    if sys.version_info >= (3, 0):
-      urlretrieve = urllib.request.urlretrieve
-    else:
-      urlretrieve = urllib.request.urlretrieve
+    urlretrieve = urllib.request.urlretrieve
     for split in SPLITS:
       reader = csv.DictReader(SPLITS[split].split("\n"))
       all_metadata = []
@@ -212,8 +209,7 @@ class DemoDataset(object):
 
         for start_time in range(0, int(row["duration"]), SECONDS_PER_EXAMPLE):
           metadata = tf.train.SequenceExample()
-          ms.set_example_id(bytes23(basename + "_" + str(start_time)),
-                            metadata)
+          ms.set_example_id(bytes23(f"{basename}_{str(start_time)}"), metadata)
           ms.set_clip_data_path(bytes23(local_path), metadata)
           ms.set_clip_start_timestamp(start_time * MICROSECONDS_PER_SECOND,
                                       metadata)
@@ -264,9 +260,9 @@ class DemoDataset(object):
     output_fd, output_filename = tempfile.mkstemp()
     cmd = [
         path_to_mediapipe_binary,
-        "--calculator_graph_config_file=%s" % graph,
-        "--input_side_packets=input_sequence_example=%s" % input_filename,
-        "--output_side_packets=output_sequence_example=%s" % output_filename
+        f"--calculator_graph_config_file={graph}",
+        f"--input_side_packets=input_sequence_example={input_filename}",
+        f"--output_side_packets=output_sequence_example={output_filename}",
     ]
     with open(input_filename, "wb") as input_file:
       input_file.write(sequence_example.SerializeToString())
@@ -285,10 +281,7 @@ class DemoDataset(object):
 
 def bytes23(string):
   """Creates a bytes string in either Python 2 or  3."""
-  if sys.version_info >= (3, 0):
-    return bytes(string, "utf8")
-  else:
-    return bytes(string)
+  return bytes(string, "utf8") if sys.version_info >= (3, 0) else bytes(string)
 
 
 @contextlib.contextmanager

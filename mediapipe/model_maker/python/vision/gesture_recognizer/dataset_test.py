@@ -50,14 +50,14 @@ class DatasetTest(tf.test.TestCase, parameterized.TestCase):
     train_data, test_data = data.split(0.5)
 
     self.assertLen(train_data, 16)
-    for _, elem in enumerate(train_data.gen_tf_dataset(is_training=True)):
+    for elem in train_data.gen_tf_dataset(is_training=True):
       self.assertEqual(elem[0].shape, (1, 128))
       self.assertEqual(elem[1].shape, ([1, 4]))
     self.assertEqual(train_data.num_classes, 4)
     self.assertEqual(train_data.label_names, ['none', 'call', 'four', 'rock'])
 
     self.assertLen(test_data, 16)
-    for _, elem in enumerate(test_data.gen_tf_dataset(is_training=True)):
+    for elem in test_data.gen_tf_dataset(is_training=True):
       self.assertEqual(elem[0].shape, (1, 128))
       self.assertEqual(elem[1].shape, ([1, 4]))
     self.assertEqual(test_data.num_classes, 4)
@@ -67,7 +67,7 @@ class DatasetTest(tf.test.TestCase, parameterized.TestCase):
     input_data_dir = test_utils.get_test_data_path(_TEST_DATA_DIRNAME)
     data = dataset.Dataset.from_folder(
         dirname=input_data_dir, hparams=dataset.HandDataPreprocessingParams())
-    for _, elem in enumerate(data.gen_tf_dataset(is_training=True)):
+    for elem in data.gen_tf_dataset(is_training=True):
       self.assertEqual(elem[0].shape, (1, 128))
       self.assertEqual(elem[1].shape, ([1, 4]))
     self.assertLen(data, 32)
@@ -112,7 +112,7 @@ class DatasetTest(tf.test.TestCase, parameterized.TestCase):
 
     data = dataset.Dataset.from_folder(
         dirname=tmp_dir, hparams=dataset.HandDataPreprocessingParams())
-    for _, elem in enumerate(data.gen_tf_dataset(is_training=True)):
+    for elem in data.gen_tf_dataset(is_training=True):
       self.assertEqual(elem[0].shape, (1, 128))
       self.assertEqual(elem[1].shape, ([1, 4]))
     self.assertLen(data, 32)

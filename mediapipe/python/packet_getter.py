@@ -64,8 +64,8 @@ def get_proto(packet: mp_packet.Packet) -> message.Message:
     descriptor = symbol_database.Default().pool.FindMessageTypeByName(
         proto_type_name)
   except KeyError:
-    raise TypeError('Can not find message descriptor by type name: %s' %
-                    proto_type_name)
+    raise TypeError(
+        f'Can not find message descriptor by type name: {proto_type_name}')
 
   message_class = symbol_database.Default().GetPrototype(descriptor)
   # pylint:disable=protected-access
@@ -105,8 +105,8 @@ def get_proto_list(packet: mp_packet.Packet) -> List[message.Message]:
     descriptor = symbol_database.Default().pool.FindMessageTypeByName(
         proto_type_name)
   except KeyError:
-    raise TypeError('Can not find message descriptor by type name: %s' %
-                    proto_type_name)
+    raise TypeError(
+        f'Can not find message descriptor by type name: {proto_type_name}')
   message_class = symbol_database.Default().GetPrototype(descriptor)
   # pylint:disable=protected-access
   serialized_protos = _packet_getter._get_serialized_proto_list(packet)

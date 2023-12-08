@@ -103,8 +103,7 @@ class HandLandmarkerMetadataWriter:
     model_asset_bundle_utils.create_model_asset_bundle(
         landmark_models, output_hand_landmarker_path
     )
-    hand_landmarker_model_buffer = read_file(output_hand_landmarker_path)
-    return hand_landmarker_model_buffer
+    return read_file(output_hand_landmarker_path)
 
 
 class MetadataWriter:

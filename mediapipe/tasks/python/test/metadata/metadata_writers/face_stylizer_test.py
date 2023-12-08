@@ -66,11 +66,11 @@ class FaceStylizerTest(parameterized.TestCase):
     with zipfile.ZipFile(model_bundle_filepath) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set([
+          {
               "face_detector.tflite",
               "face_landmarks_detector.tflite",
               "face_stylizer.tflite",
-          ]),
+          },
       )
       zf.extractall(temp_folder.name)
     temp_folder.cleanup()

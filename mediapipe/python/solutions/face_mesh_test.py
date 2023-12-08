@@ -108,8 +108,8 @@ class FaceMeshTest(parameterized.TestCase):
             landmark_drawing_spec=None,
             connection_drawing_spec=drawing_styles
             .get_default_face_mesh_iris_connections_style())
-    path = os.path.join(tempfile.gettempdir(), self.id().split('.')[-1] +
-                                              '_frame_{}.png'.format(idx))
+    path = os.path.join(tempfile.gettempdir(),
+                        (self.id().split('.')[-1] + f'_frame_{idx}.png'))
     cv2.imwrite(path, frame)
 
   def test_invalid_image_shape(self):

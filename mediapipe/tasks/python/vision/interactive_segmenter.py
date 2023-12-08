@@ -114,22 +114,21 @@ def _convert_roi_to_render_data(roi: RegionOfInterest) -> _RenderDataProto:
   """Converts region of interest to render data proto."""
   result = _RenderDataProto()
 
-  if roi is not None:
-    if roi.format == RegionOfInterest.Format.UNSPECIFIED:
-      raise ValueError('RegionOfInterest format not specified.')
-
-    elif roi.format == RegionOfInterest.Format.KEYPOINT:
-      if roi.keypoint is not None:
-        annotation = result.render_annotations.add()
-        annotation.color.r = 255
-        point = annotation.point
-        point.normalized = True
-        point.x = roi.keypoint.x
-        point.y = roi.keypoint.y
-        return result
-  else:
+  if roi is None:
     raise ValueError('Please specify the Region-of-interest for segmentation.')
 
+  if roi.format == RegionOfInterest.Format.UNSPECIFIED:
+    raise ValueError('RegionOfInterest format not specified.')
+
+  elif roi.format == RegionOfInterest.Format.KEYPOINT:
+    if roi.keypoint is not None:
+      annotation = result.render_annotations.add()
+      annotation.color.r = 255
+      point = annotation.point
+      point.normalized = True
+      point.x = roi.keypoint.x
+      point.y = roi.keypoint.y
+      return result
   raise ValueError('Unrecognized format.')
 
 

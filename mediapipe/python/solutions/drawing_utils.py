@@ -163,9 +163,8 @@ def draw_landmarks(
         (landmark.HasField('presence') and
          landmark.presence < _PRESENCE_THRESHOLD)):
       continue
-    landmark_px = _normalized_to_pixel_coordinates(landmark.x, landmark.y,
-                                                   image_cols, image_rows)
-    if landmark_px:
+    if landmark_px := _normalized_to_pixel_coordinates(landmark.x, landmark.y,
+                                                       image_cols, image_rows):
       idx_to_coordinates[idx] = landmark_px
   if connections:
     num_landmarks = len(landmark_list.landmark)

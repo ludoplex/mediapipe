@@ -80,9 +80,7 @@ def _validate_data_sample(data: _HandLandmarkerResult) -> bool:
     return False
   if data.hand_world_landmarks is None or not data.hand_world_landmarks:
     return False
-  if data.handedness is None or not data.handedness:
-    return False
-  return True
+  return bool(data.handedness is not None and data.handedness)
 
 
 def _get_hand_data(all_image_paths: List[str],
@@ -171,7 +169,7 @@ class Dataset(classification_dataset.ClassificationDataset):
 
     # Assumes the image data of the same label are in the same subdirectory,
     # gets image path and label names.
-    all_image_paths = list(tf.io.gfile.glob(data_root + r'/*/*'))
+    all_image_paths = list(tf.io.gfile.glob(f'{data_root}/*/*'))
     if not all_image_paths:
       raise ValueError('Image dataset directory is empty.')
 
@@ -192,8 +190,7 @@ class Dataset(classification_dataset.ClassificationDataset):
     none_value = label_names.pop(none_idx)
     label_names.insert(0, none_value)
 
-    index_by_label = dict(
-        (name, index) for index, name in enumerate(label_names))
+    index_by_label = {name: index for index, name in enumerate(label_names)}
     all_gesture_indices = [
         index_by_label[os.path.basename(os.path.dirname(path))]
         for path in all_image_paths
@@ -245,8 +242,8 @@ class Dataset(classification_dataset.ClassificationDataset):
         (hand_embedding_ds, label_one_hot_ds))
 
     tf.compat.v1.logging.info(
-        'Load valid hands with size: {}, num_label: {}, labels: {}.'.format(
-            len(valid_hand_data), len(label_names), ','.join(label_names)))
+        f"Load valid hands with size: {len(valid_hand_data)}, num_label: {len(label_names)}, labels: {','.join(label_names)}."
+    )
     return Dataset(
         dataset=hand_embedding_label_ds,
         label_names=label_names,
