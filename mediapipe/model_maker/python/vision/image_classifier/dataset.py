@@ -46,7 +46,7 @@ class Dataset(classification_dataset.ClassificationDataset):
 
     # Assumes the image data of the same label are in the same subdirectory,
     # gets image path and label names.
-    all_image_paths = list(tf.io.gfile.glob(data_root + r'/*/*'))
+    all_image_paths = list(tf.io.gfile.glob(f'{data_root}/*/*'))
     all_image_size = len(all_image_paths)
     if all_image_size == 0:
       raise ValueError('Image size is zero')
@@ -59,8 +59,7 @@ class Dataset(classification_dataset.ClassificationDataset):
         name for name in os.listdir(data_root)
         if os.path.isdir(os.path.join(data_root, name)))
     all_label_size = len(label_names)
-    index_by_label = dict(
-        (name, index) for index, name in enumerate(label_names))
+    index_by_label = {name: index for index, name in enumerate(label_names)}
     all_image_labels = [
         index_by_label[os.path.basename(os.path.dirname(path))]
         for path in all_image_paths

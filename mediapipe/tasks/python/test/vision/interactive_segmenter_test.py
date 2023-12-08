@@ -55,10 +55,7 @@ def _calculate_soft_iou(m1, m2):
   intersection_sum = np.sum(m1 * m2)
   union_sum = np.sum(m1 * m1) + np.sum(m2 * m2) - intersection_sum
 
-  if union_sum > 0:
-    return intersection_sum / union_sum
-  else:
-    return 0
+  return intersection_sum / union_sum if union_sum > 0 else 0
 
 
 def _similar_to_float_mask(actual_mask, expected_mask, similarity_threshold):
@@ -75,15 +72,12 @@ def _similar_to_uint8_mask(actual_mask, expected_mask, similarity_threshold):
   actual_mask_pixels = actual_mask.numpy_view().flatten()
   expected_mask_pixels = expected_mask.numpy_view().flatten()
 
-  consistent_pixels = 0
   num_pixels = len(expected_mask_pixels)
 
-  for index in range(num_pixels):
-    consistent_pixels += (
-        actual_mask_pixels[index] * _MASK_MAGNIFICATION_FACTOR
-        == expected_mask_pixels[index]
-    )
-
+  consistent_pixels = sum(
+      (actual_mask_pixels[index] *
+       _MASK_MAGNIFICATION_FACTOR == expected_mask_pixels[index])
+      for index in range(num_pixels))
   return consistent_pixels / num_pixels >= similarity_threshold
 
 

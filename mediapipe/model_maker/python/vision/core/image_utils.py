@@ -20,9 +20,8 @@ import tensorflow as tf
 def load_image(path: str) -> tf.Tensor:
   """Loads a jpeg/png image and returns an image tensor."""
   image_raw = tf.io.read_file(path)
-  image_tensor = tf.cond(
+  return tf.cond(
       tf.io.is_jpeg(image_raw),
       lambda: tf.io.decode_jpeg(image_raw, channels=3),
       lambda: tf.io.decode_png(image_raw, channels=3),
   )
-  return image_tensor

@@ -82,8 +82,8 @@ class PoseTest(parameterized.TestCase):
         results.pose_landmarks,
         mp_holistic.POSE_CONNECTIONS,
         landmark_drawing_spec=drawing_styles.get_default_pose_landmarks_style())
-    path = os.path.join(tempfile.gettempdir(), self.id().split('.')[-1] +
-                                              '_frame_{}.png'.format(idx))
+    path = os.path.join(tempfile.gettempdir(),
+                        (self.id().split('.')[-1] + f'_frame_{idx}.png'))
     cv2.imwrite(path, frame)
 
   def test_invalid_image_shape(self):

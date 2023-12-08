@@ -44,11 +44,15 @@ class DatasetTest(tf.test.TestCase):
     self.assertLen(data, 5)
     self.assertEqual(data.num_classes, 3)
     self.assertEqual(data.label_names, ['neg', 'neutral', 'pos'])
-    data_values = set([(text.numpy()[0], label.numpy()[0])
-                       for text, label in data.gen_tf_dataset()])
-    expected_data_values = set([(b'indifferent', 1), (b'extremely great', 2),
-                                (b'totally awful', 0), (b'super good', 2),
-                                (b'really bad', 0)])
+    data_values = {(text.numpy()[0], label.numpy()[0])
+                   for text, label in data.gen_tf_dataset()}
+    expected_data_values = {
+        (b'indifferent', 1),
+        (b'extremely great', 2),
+        (b'totally awful', 0),
+        (b'super good', 2),
+        (b'really bad', 0),
+    }
     self.assertEqual(data_values, expected_data_values)
 
   def test_split(self):

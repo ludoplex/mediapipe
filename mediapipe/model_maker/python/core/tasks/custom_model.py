@@ -81,4 +81,4 @@ class CustomModel(abc.ABC):
     model_util.save_tflite(
         tflite_model=tflite_model, tflite_file=tflite_filepath)
     tf.compat.v1.logging.info(
-        'TensorFlow Lite model exported successfully: %s' % tflite_filepath)
+        f'TensorFlow Lite model exported successfully: {tflite_filepath}')

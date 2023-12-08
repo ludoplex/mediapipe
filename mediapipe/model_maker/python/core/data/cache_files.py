@@ -62,11 +62,10 @@ class TFRecordCacheFiles:
   @property
   def tfrecord_files(self) -> Sequence[str]:
     """The TFRecord files."""
-    tfrecord_files = [
+    return [
         self.cache_prefix + '-%05d-of-%05d.tfrecord' % (i, self.num_shards)
         for i in range(self.num_shards)
     ]
-    return tfrecord_files
 
   @property
   def metadata_file(self) -> str:

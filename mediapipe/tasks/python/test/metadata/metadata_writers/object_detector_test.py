@@ -69,16 +69,14 @@ def read_ssd_anchors_from_csv(file_path):
             f"anchors file, but got {len(row)}."
         )
       parameters.append(row)
-  anchors = []
-  for parameter in parameters:
-    anchors.append(
-        object_detector.FixedAnchor(
-            x_center=float(parameter[1]),
-            y_center=float(parameter[0]),
-            width=float(parameter[3]),
-            height=float(parameter[2]),
-        )
-    )
+  anchors = [
+      object_detector.FixedAnchor(
+          x_center=float(parameter[1]),
+          y_center=float(parameter[0]),
+          width=float(parameter[3]),
+          height=float(parameter[2]),
+      ) for parameter in parameters
+  ]
   return object_detector.SsdAnchorsOptions(
       fixed_anchors_schema=object_detector.FixedAnchorsSchema(anchors)
   )
@@ -92,8 +90,7 @@ class MetadataWriterTest(parameterized.TestCase, absltest.TestCase):
   )
   def test_create_should_succeed(self, model_name):
     model_path = test_utils.get_test_data_path(
-        os.path.join(_TEST_DATA_DIR, model_name + ".tflite")
-    )
+        os.path.join(_TEST_DATA_DIR, f"{model_name}.tflite"))
     with open(model_path, "rb") as f:
       model_buffer = f.read()
     writer = (
@@ -106,8 +103,7 @@ class MetadataWriterTest(parameterized.TestCase, absltest.TestCase):
     )
     _, metadata_json = writer.populate()
     expected_json_path = test_utils.get_test_data_path(
-        os.path.join(_TEST_DATA_DIR, model_name + ".json")
-    )
+        os.path.join(_TEST_DATA_DIR, f"{model_name}.json"))
     with open(expected_json_path, "r") as f:
       expected_json = f.read().strip()
     self.assertEqual(metadata_json, expected_json)

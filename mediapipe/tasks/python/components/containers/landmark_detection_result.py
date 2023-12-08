@@ -82,23 +82,22 @@ class LandmarksDetectionResult:
       cls,
       pb2_obj: _LandmarksDetectionResultProto) -> 'LandmarksDetectionResult':
     """Creates a `LandmarksDetectionResult` object from the given protobuf object."""
-    categories = []
-    landmarks = []
-    world_landmarks = []
-
-    for classification in pb2_obj.classifications.classification:
-      categories.append(
-          category_module.Category(
-              score=classification.score,
-              index=classification.index,
-              category_name=classification.label,
-              display_name=classification.display_name))
-
-    for landmark in pb2_obj.landmarks.landmark:
-      landmarks.append(_NormalizedLandmark.create_from_pb2(landmark))
-
-    for landmark in pb2_obj.world_landmarks.landmark:
-      world_landmarks.append(_Landmark.create_from_pb2(landmark))
+    categories = [
+        category_module.Category(
+            score=classification.score,
+            index=classification.index,
+            category_name=classification.label,
+            display_name=classification.display_name,
+        ) for classification in pb2_obj.classifications.classification
+    ]
+    landmarks = [
+        _NormalizedLandmark.create_from_pb2(landmark)
+        for landmark in pb2_obj.landmarks.landmark
+    ]
+    world_landmarks = [
+        _Landmark.create_from_pb2(landmark)
+        for landmark in pb2_obj.world_landmarks.landmark
+    ]
     return LandmarksDetectionResult(
         landmarks=landmarks,
         categories=categories,

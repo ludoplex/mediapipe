@@ -58,37 +58,33 @@ _FACIAL_TRANSFORMATION_MATRIX_MARGIN = 0.02
 
 def _get_expected_face_landmarks(file_path: str):
   proto_file_path = test_utils.get_test_data_path(file_path)
-  face_landmarks_results = []
   with open(proto_file_path, 'rb') as f:
     proto = landmark_pb2.NormalizedLandmarkList()
     text_format.Parse(f.read(), proto)
-    face_landmarks = []
-    for landmark in proto.landmark:
-      face_landmarks.append(_NormalizedLandmark.create_from_pb2(landmark))
-  face_landmarks_results.append(face_landmarks)
-  return face_landmarks_results
+    face_landmarks = [
+        _NormalizedLandmark.create_from_pb2(landmark)
+        for landmark in proto.landmark
+    ]
+  return [face_landmarks]
 
 
 def _get_expected_face_blendshapes(file_path: str):
   proto_file_path = test_utils.get_test_data_path(file_path)
-  face_blendshapes_results = []
   with open(proto_file_path, 'rb') as f:
     proto = classification_pb2.ClassificationList()
     text_format.Parse(f.read(), proto)
-    face_blendshapes_categories = []
     face_blendshapes_classifications = classification_pb2.ClassificationList()
     face_blendshapes_classifications.MergeFrom(proto)
-    for face_blendshapes in face_blendshapes_classifications.classification:
-      face_blendshapes_categories.append(
-          category_module.Category(
-              index=face_blendshapes.index,
-              score=face_blendshapes.score,
-              display_name=face_blendshapes.display_name,
-              category_name=face_blendshapes.label,
-          )
-      )
-  face_blendshapes_results.append(face_blendshapes_categories)
-  return face_blendshapes_results
+    face_blendshapes_categories = [
+        category_module.Category(
+            index=face_blendshapes.index,
+            score=face_blendshapes.score,
+            display_name=face_blendshapes.display_name,
+            category_name=face_blendshapes.label,
+        )
+        for face_blendshapes in face_blendshapes_classifications.classification
+    ]
+  return [face_blendshapes_categories]
 
 
 def _get_expected_facial_transformation_matrixes():
@@ -98,9 +94,7 @@ def _get_expected_facial_transformation_matrixes():
       [-0.03715533, 0.11070588, 0.99315894, -65.765925],
       [0, 0, 0, 1],
   ])
-  facial_transformation_matrixes_results = []
-  facial_transformation_matrixes_results.append(matrix)
-  return facial_transformation_matrixes_results
+  return [matrix]
 
 
 class ModelFileType(enum.Enum):
@@ -230,10 +224,9 @@ class FaceLandmarkerTest(parameterized.TestCase):
 
     options = _FaceLandmarkerOptions(
         base_options=base_options,
-        output_face_blendshapes=True if expected_face_blendshapes else False,
-        output_facial_transformation_matrixes=True
-        if expected_facial_transformation_matrixes
-        else False,
+        output_face_blendshapes=bool(expected_face_blendshapes),
+        output_facial_transformation_matrixes=bool(
+            expected_facial_transformation_matrixes),
     )
     landmarker = _FaceLandmarker.create_from_options(options)
 
@@ -296,10 +289,9 @@ class FaceLandmarkerTest(parameterized.TestCase):
 
     options = _FaceLandmarkerOptions(
         base_options=base_options,
-        output_face_blendshapes=True if expected_face_blendshapes else False,
-        output_facial_transformation_matrixes=True
-        if expected_facial_transformation_matrixes
-        else False,
+        output_face_blendshapes=bool(expected_face_blendshapes),
+        output_facial_transformation_matrixes=bool(
+            expected_facial_transformation_matrixes),
     )
 
     with _FaceLandmarker.create_from_options(options) as landmarker:
@@ -437,10 +429,9 @@ class FaceLandmarkerTest(parameterized.TestCase):
     options = _FaceLandmarkerOptions(
         base_options=base_options,
         running_mode=_RUNNING_MODE.VIDEO,
-        output_face_blendshapes=True if expected_face_blendshapes else False,
-        output_facial_transformation_matrixes=True
-        if expected_facial_transformation_matrixes
-        else False,
+        output_face_blendshapes=bool(expected_face_blendshapes),
+        output_facial_transformation_matrixes=bool(
+            expected_facial_transformation_matrixes),
     )
 
     with _FaceLandmarker.create_from_options(options) as landmarker:
@@ -550,10 +541,9 @@ class FaceLandmarkerTest(parameterized.TestCase):
     options = _FaceLandmarkerOptions(
         base_options=_BaseOptions(model_asset_path=model_path),
         running_mode=_RUNNING_MODE.LIVE_STREAM,
-        output_face_blendshapes=True if expected_face_blendshapes else False,
-        output_facial_transformation_matrixes=True
-        if expected_facial_transformation_matrixes
-        else False,
+        output_face_blendshapes=bool(expected_face_blendshapes),
+        output_facial_transformation_matrixes=bool(
+            expected_facial_transformation_matrixes),
         result_callback=check_result,
     )
     with _FaceLandmarker.create_from_options(options) as landmarker:

@@ -238,11 +238,10 @@ def get_label_map_coco(data_dir: str):
   with open(label_file, 'r') as f:
     data = json.load(f)
 
-  # Categories
-  label_map = {}
-  for category in data['categories']:
-    label_map[int(category['id'])] = category['name']
-
+  label_map = {
+      int(category['id']): category['name']
+      for category in data['categories']
+  }
   if 0 in label_map and label_map[0] != 'background':
     raise ValueError(
         (
@@ -271,7 +270,7 @@ def get_label_map_pascal_voc(data_dir: str):
   data_dir = os.path.abspath(data_dir)
   all_label_names = set()
   annotations_dir = os.path.join(data_dir, 'Annotations')
-  all_annotation_files = tf.io.gfile.glob(annotations_dir + r'/*.xml')
+  all_annotation_files = tf.io.gfile.glob(f'{annotations_dir}/*.xml')
   for ann_file in all_annotation_files:
     tree = ET.parse(ann_file)
     root = tree.getroot()
@@ -293,16 +292,18 @@ def _bbox_data_to_feature_dict(data):
   Returns:
     Feature dictionary
   """
-  bbox_feature_dict = {
-      'image/object/bbox/xmin': tfrecord_lib.convert_to_feature(data['xmin']),
-      'image/object/bbox/xmax': tfrecord_lib.convert_to_feature(data['xmax']),
-      'image/object/bbox/ymin': tfrecord_lib.convert_to_feature(data['ymin']),
-      'image/object/bbox/ymax': tfrecord_lib.convert_to_feature(data['ymax']),
-      'image/object/class/label': tfrecord_lib.convert_to_feature(
-          data['category_id']
-      ),
+  return {
+      'image/object/bbox/xmin':
+      tfrecord_lib.convert_to_feature(data['xmin']),
+      'image/object/bbox/xmax':
+      tfrecord_lib.convert_to_feature(data['xmax']),
+      'image/object/bbox/ymin':
+      tfrecord_lib.convert_to_feature(data['ymin']),
+      'image/object/bbox/ymax':
+      tfrecord_lib.convert_to_feature(data['ymax']),
+      'image/object/class/label':
+      tfrecord_lib.convert_to_feature(data['category_id']),
   }
-  return bbox_feature_dict
 
 
 def _coco_annotations_to_lists(
@@ -391,10 +392,7 @@ class COCOCacheFilesWriter(CacheFilesWriter):
         continue
       bbox_feature_dict = _bbox_data_to_feature_dict(data)
       feature_dict.update(bbox_feature_dict)
-      example = tf.train.Example(
-          features=tf.train.Features(feature=feature_dict)
-      )
-      yield example
+      yield tf.train.Example(features=tf.train.Features(feature=feature_dict))
 
 
 class PascalVocCacheFilesWriter(CacheFilesWriter):
@@ -412,7 +410,7 @@ class PascalVocCacheFilesWriter(CacheFilesWriter):
     label_name_to_id = {name: i for (i, name) in self.label_map.items()}
     annotations_dir = os.path.join(data_dir, 'Annotations')
     images_dir = os.path.join(data_dir, 'images')
-    all_annotation_paths = tf.io.gfile.glob(annotations_dir + r'/*.xml')
+    all_annotation_paths = tf.io.gfile.glob(f'{annotations_dir}/*.xml')
 
     for ind, ann_file in enumerate(all_annotation_paths):
       data = collections.defaultdict(list)
@@ -448,7 +446,4 @@ class PascalVocCacheFilesWriter(CacheFilesWriter):
       )
       bbox_feature_dict = _bbox_data_to_feature_dict(data)
       feature_dict.update(bbox_feature_dict)
-      example = tf.train.Example(
-          features=tf.train.Features(feature=feature_dict)
-      )
-      yield example
+      yield tf.train.Example(features=tf.train.Features(feature=feature_dict))

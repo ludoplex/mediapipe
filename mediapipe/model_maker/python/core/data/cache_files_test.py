@@ -28,7 +28,7 @@ class CacheFilesTest(tf.test.TestCase):
     self.assertEqual(cf.cache_prefix, '/tmp/cache_dir/tfrecord')
     self.assertEqual(
         cf.metadata_file,
-        '/tmp/cache_dir/tfrecord' + cache_files.METADATA_FILE_SUFFIX,
+        f'/tmp/cache_dir/tfrecord{cache_files.METADATA_FILE_SUFFIX}',
     )
     expected_tfrecord_files = [
         '/tmp/cache_dir/tfrecord-%05d-of-%05d.tfrecord' % (i, 2)

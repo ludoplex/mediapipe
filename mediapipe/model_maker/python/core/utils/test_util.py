@@ -43,8 +43,7 @@ def create_dataset(data_size: int,
       shape=[data_size], minval=0, maxval=num_classes, dtype=tf.int32)
 
   tf_dataset = tf.data.Dataset.from_tensor_slices((features, labels))
-  dataset = ds.Dataset(tf_dataset, data_size)
-  return dataset
+  return ds.Dataset(tf_dataset, data_size)
 
 
 def create_random_sample(size: Union[int, List[int]],
@@ -76,8 +75,7 @@ def build_model(input_shape: List[int], num_classes: int) -> tf.keras.Model:
   else:
     raise ValueError("Model inputs should be 2D tensor or 4D tensor.")
 
-  model = tf.keras.Model(inputs=inputs, outputs=outputs)
-  return model
+  return tf.keras.Model(inputs=inputs, outputs=outputs)
 
 
 def is_same_output(tflite_model: bytearray,

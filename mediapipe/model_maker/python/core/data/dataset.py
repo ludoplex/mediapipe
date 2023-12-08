@@ -131,10 +131,7 @@ class Dataset(object):
       TypeError if self._size is not set and the cardinality of self._dataset
         is INFINITE_CARDINALITY or UNKNOWN_CARDINALITY.
     """
-    if self._size is not None:
-      return self._size
-    else:
-      return len(self._dataset)
+    return self._size if self._size is not None else len(self._dataset)
 
   def split(self: _DatasetT, fraction: float) -> Tuple[_DatasetT, _DatasetT]:
     """Splits dataset into two sub-datasets with the given fraction.
@@ -170,7 +167,7 @@ class Dataset(object):
       ValueError: if the provided fraction is not between 0 and 1.
       ValueError: if this dataset does not have a set size.
     """
-    if not (fraction > 0 and fraction < 1):
+    if fraction <= 0 or fraction >= 1:
       raise ValueError(f'Fraction must be between 0 and 1. Got:{fraction}')
     if not self._size:
       raise ValueError(

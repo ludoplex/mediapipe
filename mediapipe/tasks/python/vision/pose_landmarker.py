@@ -89,21 +89,19 @@ def _build_landmarker_result(
   for proto in pose_landmarks_proto_list:
     pose_landmarks = landmark_pb2.NormalizedLandmarkList()
     pose_landmarks.MergeFrom(proto)
-    pose_landmarks_list = []
-    for pose_landmark in pose_landmarks.landmark:
-      pose_landmarks_list.append(
-          landmark_module.NormalizedLandmark.create_from_pb2(pose_landmark)
-      )
+    pose_landmarks_list = [
+        landmark_module.NormalizedLandmark.create_from_pb2(pose_landmark)
+        for pose_landmark in pose_landmarks.landmark
+    ]
     pose_landmarker_result.pose_landmarks.append(pose_landmarks_list)
 
   for proto in pose_world_landmarks_proto_list:
     pose_world_landmarks = landmark_pb2.LandmarkList()
     pose_world_landmarks.MergeFrom(proto)
-    pose_world_landmarks_list = []
-    for pose_world_landmark in pose_world_landmarks.landmark:
-      pose_world_landmarks_list.append(
-          landmark_module.Landmark.create_from_pb2(pose_world_landmark)
-      )
+    pose_world_landmarks_list = [
+        landmark_module.Landmark.create_from_pb2(pose_world_landmark)
+        for pose_world_landmark in pose_world_landmarks.landmark
+    ]
     pose_landmarker_result.pose_world_landmarks.append(
         pose_world_landmarks_list
     )
@@ -202,9 +200,7 @@ class PoseLandmarkerOptions:
   def to_pb2(self) -> _PoseLandmarkerGraphOptionsProto:
     """Generates an PoseLandmarkerGraphOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
 
     # Initialize the pose landmarker options from base options.
     pose_landmarker_options_proto = _PoseLandmarkerGraphOptionsProto(

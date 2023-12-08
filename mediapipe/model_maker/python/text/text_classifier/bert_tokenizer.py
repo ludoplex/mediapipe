@@ -66,7 +66,7 @@ class BertFullTokenizer(BertTokenizer):
         keys "input_word_ids", "input_type_ids", and "input_mask".
     """
     tokens = self._tokenizer.tokenize(input_tensor.numpy()[0].decode("utf-8"))
-    tokens = tokens[0 : (self._seq_len - 2)]  # account for [CLS] and [SEP]
+    tokens = tokens[:self._seq_len - 2]
     tokens.insert(0, "[CLS]")
     tokens.append("[SEP]")
     input_ids = self._tokenizer.convert_tokens_to_ids(tokens)

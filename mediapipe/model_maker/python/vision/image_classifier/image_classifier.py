@@ -192,13 +192,13 @@ class ImageClassifier(classifier.Classifier):
 
     learning_rate_fn = tf.keras.experimental.CosineDecay(
         initial_learning_rate=init_lr, decay_steps=decay_steps, alpha=0.0)
-    warmup_steps = self._hparams.warmup_epochs * self._hparams.steps_per_epoch
-    if warmup_steps:
+    if (warmup_steps :=
+        self._hparams.warmup_epochs * self._hparams.steps_per_epoch):
       learning_rate_fn = model_util.WarmUp(
           initial_learning_rate=init_lr,
           decay_schedule_fn=learning_rate_fn,
           warmup_steps=warmup_steps)
-    optimizer = tf.keras.optimizers.RMSprop(
-        learning_rate=learning_rate_fn, rho=0.9, momentum=0.9, epsilon=0.001)
-
-    return optimizer
+    return tf.keras.optimizers.RMSprop(learning_rate=learning_rate_fn,
+                                       rho=0.9,
+                                       momentum=0.9,
+                                       epsilon=0.001)

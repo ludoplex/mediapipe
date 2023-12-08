@@ -79,6 +79,6 @@ class SupportedModels(enum.Enum):
   def get(cls, spec: 'SupportedModels') -> 'ModelSpec':
     """Gets model spec from the input enum and initializes it."""
     if spec not in cls:
-      raise TypeError('Unsupported image classifier spec: {}'.format(spec))
+      raise TypeError(f'Unsupported image classifier spec: {spec}')
 
     return spec.value()

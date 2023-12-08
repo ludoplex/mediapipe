@@ -2882,11 +2882,10 @@ def _build_landmarker_result(
   for proto in face_landmarks_proto_list:
     face_landmarks = landmark_pb2.NormalizedLandmarkList()
     face_landmarks.MergeFrom(proto)
-    face_landmarks_list = []
-    for face_landmark in face_landmarks.landmark:
-      face_landmarks_list.append(
-          landmark_module.NormalizedLandmark.create_from_pb2(face_landmark)
-      )
+    face_landmarks_list = [
+        landmark_module.NormalizedLandmark.create_from_pb2(face_landmark)
+        for face_landmark in face_landmarks.landmark
+    ]
     face_landmarks_results.append(face_landmarks_list)
 
   face_blendshapes_results = []
@@ -2895,18 +2894,17 @@ def _build_landmarker_result(
         output_packets[_BLENDSHAPES_STREAM_NAME]
     )
     for proto in face_blendshapes_proto_list:
-      face_blendshapes_categories = []
       face_blendshapes_classifications = classification_pb2.ClassificationList()
       face_blendshapes_classifications.MergeFrom(proto)
-      for face_blendshapes in face_blendshapes_classifications.classification:
-        face_blendshapes_categories.append(
-            category_module.Category(
-                index=face_blendshapes.index,
-                score=face_blendshapes.score,
-                display_name=face_blendshapes.display_name,
-                category_name=face_blendshapes.label,
-            )
-        )
+      face_blendshapes_categories = [
+          category_module.Category(
+              index=face_blendshapes.index,
+              score=face_blendshapes.score,
+              display_name=face_blendshapes.display_name,
+              category_name=face_blendshapes.label,
+          ) for face_blendshapes in
+          face_blendshapes_classifications.classification
+      ]
       face_blendshapes_results.append(face_blendshapes_categories)
 
   facial_transformation_matrixes_results = []
@@ -2980,9 +2978,7 @@ class FaceLandmarkerOptions:
   def to_pb2(self) -> _FaceLandmarkerGraphOptionsProto:
     """Generates an FaceLandmarkerGraphOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
 
     # Initialize the face landmarker options from base options.
     face_landmarker_options_proto = _FaceLandmarkerGraphOptionsProto(

@@ -318,8 +318,8 @@ class Kinetics(object):
         if video_path_format_string:
           filepath = video_path_format_string.format(**row)
           ms.set_clip_data_path(bytes23(filepath), metadata)
-        assert row["start"].isdigit(), "Invalid row: %s" % str(row)
-        assert row["end"].isdigit(), "Invalid row: %s" % str(row)
+        assert row["start"].isdigit(), f"Invalid row: {row}"
+        assert row["end"].isdigit(), f"Invalid row: {row}"
         if "label_name" in row:
           ms.set_clip_label_string([bytes23(row["label_name"])], metadata)
           if label_map:
@@ -328,10 +328,7 @@ class Kinetics(object):
 
   def _download_data(self, download_labels_for_map):
     """Downloads and extracts data if not already available."""
-    if sys.version_info >= (3, 0):
-      urlretrieve = urllib.request.urlretrieve
-    else:
-      urlretrieve = urllib.request.urlretrieve
+    urlretrieve = urllib.request.urlretrieve
     logging.info("Creating data directory.")
     tf.io.gfile.makedirs(self.path_to_data)
     logging.info("Downloading annotations.")
@@ -343,7 +340,7 @@ class Kinetics(object):
         with tarfile.open(tar_path) as annotations_tar:
           annotations_tar.extractall(self.path_to_data)
       for split in ["train", "test", "validate"]:
-        csv_path = os.path.join(self.path_to_data, "kinetics700/%s.csv" % split)
+        csv_path = os.path.join(self.path_to_data, f"kinetics700/{split}.csv")
         if not tf.io.gfile.exists(csv_path):
           with tarfile.open(tar_path) as annotations_tar:
             annotations_tar.extractall(self.path_to_data)
@@ -374,10 +371,12 @@ class Kinetics(object):
       raise ValueError("--path_to_mediapipe_binary must be specified.")
     input_fd, input_filename = tempfile.mkstemp()
     output_fd, output_filename = tempfile.mkstemp()
-    cmd = [path_to_mediapipe_binary,
-           "--calculator_graph_config_file=%s" % graph,
-           "--input_side_packets=input_sequence_example=%s" % input_filename,
-           "--output_side_packets=output_sequence_example=%s" % output_filename]
+    cmd = [
+        path_to_mediapipe_binary,
+        f"--calculator_graph_config_file={graph}",
+        f"--input_side_packets=input_sequence_example={input_filename}",
+        f"--output_side_packets=output_sequence_example={output_filename}",
+    ]
     with open(input_filename, "wb") as input_file:
       input_file.write(sequence_example.SerializeToString())
     mediapipe_output = subprocess.check_output(cmd)
@@ -417,10 +416,7 @@ class Kinetics(object):
 
 def bytes23(string):
   """Creates a bytes string in either Python 2 or  3."""
-  if sys.version_info >= (3, 0):
-    return bytes(string, "utf8")
-  else:
-    return bytes(string)
+  return bytes(string, "utf8") if sys.version_info >= (3, 0) else bytes(string)
 
 
 @contextlib.contextmanager

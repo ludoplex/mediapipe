@@ -109,8 +109,7 @@ class PacketDataType(enum.Enum):
     try:
       return NAME_TO_TYPE[registered_name]
     except KeyError as e:
-      names = type_names_from_oneof(registered_name)
-      if names:
+      if names := type_names_from_oneof(registered_name):
         for n in names:
           if n in NAME_TO_TYPE.keys():
             return NAME_TO_TYPE[n]
@@ -348,15 +347,13 @@ class SolutionBase:
     self._simulated_timestamp += 33333
     for stream_name, data in input_dict.items():
       input_stream_type = self._input_stream_type_info[stream_name]
-      if (input_stream_type == PacketDataType.PROTO_LIST or
-          input_stream_type == PacketDataType.AUDIO):
+      if input_stream_type in [PacketDataType.PROTO_LIST, PacketDataType.AUDIO]:
         # TODO: Support audio data.
         raise NotImplementedError(
             f'SolutionBase can only process non-audio and non-proto-list data. '
             f'{self._input_stream_type_info[stream_name].name} '
             f'type is not supported yet.')
-      elif (input_stream_type == PacketDataType.IMAGE_FRAME or
-            input_stream_type == PacketDataType.IMAGE):
+      elif input_stream_type in [PacketDataType.IMAGE_FRAME, PacketDataType.IMAGE]:
         if data.shape[2] != RGB_CHANNELS:
           raise ValueError('Input image must contain three channel rgb data.')
         self._graph.add_packet_to_input_stream(
@@ -591,12 +588,11 @@ class SolutionBase:
 
   def _make_packet(self, packet_data_type: PacketDataType,
                    data: Any) -> packet.Packet:
-    if (packet_data_type == PacketDataType.IMAGE_FRAME or
-        packet_data_type == PacketDataType.IMAGE):
-      return getattr(packet_creator, 'create_' + packet_data_type.value)(
+    if packet_data_type in [PacketDataType.IMAGE_FRAME, PacketDataType.IMAGE]:
+      return getattr(packet_creator, f'create_{packet_data_type.value}')(
           data, image_format=image_frame.ImageFormat.SRGB)
     else:
-      return getattr(packet_creator, 'create_' + packet_data_type.value)(data)
+      return getattr(packet_creator, f'create_{packet_data_type.value}')(data)
 
   def _get_packet_content(self, packet_data_type: PacketDataType,
                           output_packet: packet.Packet) -> Any:
@@ -615,13 +611,11 @@ class SolutionBase:
       return None
     if packet_data_type == PacketDataType.STRING:
       return packet_getter.get_str(output_packet)
-    elif (packet_data_type == PacketDataType.IMAGE_FRAME or
-          packet_data_type == PacketDataType.IMAGE):
+    elif packet_data_type in [PacketDataType.IMAGE_FRAME, PacketDataType.IMAGE]:
       return getattr(packet_getter, 'get_' +
                      packet_data_type.value)(output_packet).numpy_view()
     else:
-      return getattr(packet_getter, 'get_' + packet_data_type.value)(
-          output_packet)
+      return getattr(packet_getter, f'get_{packet_data_type.value}')(output_packet)
 
   def __enter__(self):
     """A "with" statement support."""

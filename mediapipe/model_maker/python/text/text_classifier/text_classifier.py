@@ -479,30 +479,25 @@ class _BertClassifier(TextClassifier):
     ]
     if self._num_classes == 2:
       if self._hparams.desired_precisions:
-        for desired_precision in self._hparams.desired_precisions:
-          metric_functions.append(
-              metrics.BinarySparseRecallAtPrecision(
-                  desired_precision,
-                  name=f"recall_at_precision_{desired_precision}",
-                  num_thresholds=1000,
-              )
-          )
+        metric_functions.extend(
+            metrics.BinarySparseRecallAtPrecision(
+                desired_precision,
+                name=f"recall_at_precision_{desired_precision}",
+                num_thresholds=1000,
+            ) for desired_precision in self._hparams.desired_precisions)
       if self._hparams.desired_recalls:
-        for desired_recall in self._hparams.desired_recalls:
-          metric_functions.append(
-              metrics.BinarySparseRecallAtPrecision(
-                  desired_recall,
-                  name=f"precision_at_recall_{desired_recall}",
-                  num_thresholds=1000,
-              )
-          )
-    else:
-      if self._hparams.desired_precisions or self._hparams.desired_recalls:
-        raise ValueError(
-            "desired_recalls and desired_precisions parameters are binary"
-            " metrics and not supported for num_classes > 2. Found"
-            f" num_classes: {self._num_classes}"
-        )
+        metric_functions.extend(
+            metrics.BinarySparseRecallAtPrecision(
+                desired_recall,
+                name=f"precision_at_recall_{desired_recall}",
+                num_thresholds=1000,
+            ) for desired_recall in self._hparams.desired_recalls)
+    elif self._hparams.desired_precisions or self._hparams.desired_recalls:
+      raise ValueError(
+          "desired_recalls and desired_precisions parameters are binary"
+          " metrics and not supported for num_classes > 2. Found"
+          f" num_classes: {self._num_classes}"
+      )
     return metric_functions
 
   def _create_model(self):

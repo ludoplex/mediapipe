@@ -41,8 +41,8 @@ class FaceDetectionTest(parameterized.TestCase):
   def _annotate(self, frame: np.ndarray, results: NamedTuple, idx: int):
     for detection in results.detections:
       mp_drawing.draw_detection(frame, detection)
-    path = os.path.join(tempfile.gettempdir(), self.id().split('.')[-1] +
-                                              '_frame_{}.png'.format(idx))
+    path = os.path.join(tempfile.gettempdir(),
+                        (self.id().split('.')[-1] + f'_frame_{idx}.png'))
     cv2.imwrite(path, frame)
 
   def test_invalid_image_shape(self):

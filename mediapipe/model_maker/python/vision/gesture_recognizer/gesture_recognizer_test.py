@@ -37,10 +37,10 @@ class GestureRecognizerTest(tf.test.TestCase):
     input_data_dir = test_utils.get_test_data_path(
         os.path.join(_TEST_DATA_DIR, 'raw_data'))
 
-    data = gesture_recognizer.Dataset.from_folder(
+    return gesture_recognizer.Dataset.from_folder(
         dirname=input_data_dir,
-        hparams=gesture_recognizer.HandDataPreprocessingParams(shuffle=True))
-    return data
+        hparams=gesture_recognizer.HandDataPreprocessingParams(shuffle=True),
+    )
 
   def setUp(self):
     super().setUp()
@@ -116,17 +116,20 @@ class GestureRecognizerTest(tf.test.TestCase):
     with zipfile.ZipFile(model_bundle_file) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set(['hand_landmarker.task', 'hand_gesture_recognizer.task']))
+          {'hand_landmarker.task', 'hand_gesture_recognizer.task'},
+      )
       zf.extractall(self.get_temp_dir())
     hand_gesture_recognizer_bundle_file = os.path.join(
         self.get_temp_dir(), 'hand_gesture_recognizer.task')
     with zipfile.ZipFile(hand_gesture_recognizer_bundle_file) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set([
+          {
               'canned_gesture_classifier.tflite',
-              'custom_gesture_classifier.tflite', 'gesture_embedder.tflite'
-          ]))
+              'custom_gesture_classifier.tflite',
+              'gesture_embedder.tflite',
+          },
+      )
       zf.extractall(self.get_temp_dir())
     gesture_classifier_tflite_file = os.path.join(
         self.get_temp_dir(), 'custom_gesture_classifier.tflite')

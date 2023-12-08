@@ -51,17 +51,15 @@ def run(model_path, n_iterations, delegate):
   )
 
   with interactive_segmenter.InteractiveSegmenter.create_from_options(
-      options
-  ) as segmenter:
+        options
+    ) as segmenter:
     mp_image = image.Image.create_from_file(
         benchmark_utils.get_test_data_path(
             base_vision_benchmark_api.VISION_TEST_DATA_DIR, _IMAGE_FILE
         )
     )
-    inference_times = base_vision_benchmark_api.benchmark_task(
-        functools.partial(segmenter.segment, roi=roi), mp_image, n_iterations
-    )
-    return inference_times
+    return base_vision_benchmark_api.benchmark_task(
+        functools.partial(segmenter.segment, roi=roi), mp_image, n_iterations)
 
 
 if __name__ == '__main__':

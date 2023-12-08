@@ -332,88 +332,184 @@ REGION_EMBEDDING_CONFIDENCE_KEY = "region/embedding/confidence"
 
 def _create_region_with_prefix(name, prefix):
   """Create multiple accessors for region based data."""
-  msu.create_int_feature_list(name + "_num_regions", REGION_NUM_REGIONS_KEY,
-                              prefix=prefix, module_dict=globals())
-  msu.create_int_feature_list(name + "_is_annotated", REGION_IS_ANNOTATED_KEY,
-                              prefix=prefix, module_dict=globals())
-  msu.create_int_list_feature_list(
-      name + "_is_occluded", REGION_IS_OCCLUDED_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_int_list_feature_list(
-      name + "_is_generated", REGION_IS_GENERATED_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_int_feature_list(name + "_timestamp", REGION_TIMESTAMP_KEY,
-                              prefix=prefix, module_dict=globals())
   msu.create_int_feature_list(
-      name + "_unmodified_timestamp", REGION_UNMODIFIED_TIMESTAMP_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_bytes_list_feature_list(
-      name + "_label_string", REGION_LABEL_STRING_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_num_regions",
+      REGION_NUM_REGIONS_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_int_feature_list(
+      f"{name}_is_annotated",
+      REGION_IS_ANNOTATED_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_int_list_feature_list(
-      name + "_label_index", REGION_LABEL_INDEX_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(
-      name + "_label_confidence", REGION_LABEL_CONFIDENCE_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_bytes_list_feature_list(
-      name + "_class_string", REGION_CLASS_STRING_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_is_occluded",
+      REGION_IS_OCCLUDED_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_int_list_feature_list(
-      name + "_class_index", REGION_CLASS_INDEX_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(
-      name + "_class_confidence", REGION_CLASS_CONFIDENCE_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_is_generated",
+      REGION_IS_GENERATED_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_int_feature_list(
+      f"{name}_timestamp",
+      REGION_TIMESTAMP_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_int_feature_list(
+      f"{name}_unmodified_timestamp",
+      REGION_UNMODIFIED_TIMESTAMP_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_bytes_list_feature_list(
-      name + "_track_string", REGION_TRACK_STRING_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_label_string",
+      REGION_LABEL_STRING_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_int_list_feature_list(
-      name + "_track_index", REGION_TRACK_INDEX_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_label_index",
+      REGION_LABEL_INDEX_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_float_list_feature_list(
-      name + "_track_confidence", REGION_TRACK_CONFIDENCE_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_ymin", REGION_BBOX_YMIN_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_xmin", REGION_BBOX_XMIN_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_ymax", REGION_BBOX_YMAX_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_xmax", REGION_BBOX_XMAX_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_point_x", REGION_POINT_X_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_point_y", REGION_POINT_Y_KEY,
-                                     prefix=prefix, module_dict=globals())
+      f"{name}_label_confidence",
+      REGION_LABEL_CONFIDENCE_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_bytes_list_feature_list(
+      f"{name}_class_string",
+      REGION_CLASS_STRING_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_int_list_feature_list(
+      f"{name}_class_index",
+      REGION_CLASS_INDEX_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_float_list_feature_list(
-      name + "_3d_point_x", REGION_3D_POINT_X_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_class_confidence",
+      REGION_CLASS_CONFIDENCE_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_bytes_list_feature_list(
+      f"{name}_track_string",
+      REGION_TRACK_STRING_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_int_list_feature_list(
+      f"{name}_track_index",
+      REGION_TRACK_INDEX_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_float_list_feature_list(
-      name + "_3d_point_y", REGION_3D_POINT_Y_KEY,
-      prefix=prefix, module_dict=globals())
+      f"{name}_track_confidence",
+      REGION_TRACK_CONFIDENCE_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   msu.create_float_list_feature_list(
-      name + "_3d_point_z", REGION_3D_POINT_Z_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_bytes_list_context_feature(name + "_parts",
+      f"{name}_ymin",
+      REGION_BBOX_YMIN_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_xmin",
+      REGION_BBOX_XMIN_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_ymax",
+      REGION_BBOX_YMAX_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_xmax",
+      REGION_BBOX_XMAX_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_point_x",
+      REGION_POINT_X_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_point_y",
+      REGION_POINT_Y_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_3d_point_x",
+      REGION_3D_POINT_X_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_3d_point_y",
+      REGION_3D_POINT_Y_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_3d_point_z",
+      REGION_3D_POINT_Z_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_bytes_list_context_feature(f"{name}_parts",
                                         REGION_PARTS_KEY,
-                                        prefix=prefix, module_dict=globals())
+                                        prefix=prefix,
+                                        module_dict=globals())
   msu.create_float_list_context_feature(
-      name + "_embedding_dimensions_per_region",
+      f"{name}_embedding_dimensions_per_region",
       REGION_EMBEDDING_DIMENSIONS_PER_REGION_KEY,
-      prefix=prefix, module_dict=globals())
-  msu.create_bytes_context_feature(name + "_embedding_format",
-                                   REGION_EMBEDDING_FORMAT_KEY,
-                                   prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_embedding_floats",
-                                     REGION_EMBEDDING_FLOAT_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_bytes_list_feature_list(name + "_embedding_encoded",
-                                     REGION_EMBEDDING_ENCODED_KEY,
-                                     prefix=prefix, module_dict=globals())
-  msu.create_float_list_feature_list(name + "_embedding_confidence",
-                                     REGION_EMBEDDING_CONFIDENCE_KEY,
-                                     prefix=prefix, module_dict=globals())
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_bytes_context_feature(
+      f"{name}_embedding_format",
+      REGION_EMBEDDING_FORMAT_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_embedding_floats",
+      REGION_EMBEDDING_FLOAT_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_bytes_list_feature_list(
+      f"{name}_embedding_encoded",
+      REGION_EMBEDDING_ENCODED_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
+  msu.create_float_list_feature_list(
+      f"{name}_embedding_confidence",
+      REGION_EMBEDDING_CONFIDENCE_KEY,
+      prefix=prefix,
+      module_dict=globals(),
+  )
   # pylint: disable=undefined-variable
   def get_prefixed_bbox_at(index, sequence_example, prefix):
     return np.stack((
@@ -422,6 +518,7 @@ def _create_region_with_prefix(name, prefix):
         get_bbox_ymax_at(index, sequence_example, prefix=prefix),
         get_bbox_xmax_at(index, sequence_example, prefix=prefix)),
                     1)
+
   def add_prefixed_bbox(values, sequence_example, prefix):
     values = np.array(values)
     if values.size == 0:
@@ -434,85 +531,108 @@ def _create_region_with_prefix(name, prefix):
       add_bbox_xmin(values[:, 1], sequence_example, prefix=prefix)
       add_bbox_ymax(values[:, 2], sequence_example, prefix=prefix)
       add_bbox_xmax(values[:, 3], sequence_example, prefix=prefix)
+
   def get_prefixed_bbox_size(sequence_example, prefix):
     return get_bbox_ymin_size(sequence_example, prefix=prefix)
+
   def has_prefixed_bbox(sequence_example, prefix):
     return has_bbox_ymin(sequence_example, prefix=prefix)
+
   def clear_prefixed_bbox(sequence_example, prefix):
     clear_bbox_ymin(sequence_example, prefix=prefix)
     clear_bbox_xmin(sequence_example, prefix=prefix)
     clear_bbox_ymax(sequence_example, prefix=prefix)
     clear_bbox_xmax(sequence_example, prefix=prefix)
+
   def get_prefixed_point_at(index, sequence_example, prefix):
     return np.stack((
         get_bbox_point_y_at(index, sequence_example, prefix=prefix),
         get_bbox_point_x_at(index, sequence_example, prefix=prefix)),
                     1)
+
   def add_prefixed_point(values, sequence_example, prefix):
     add_bbox_point_y(values[:, 0], sequence_example, prefix=prefix)
     add_bbox_point_x(values[:, 1], sequence_example, prefix=prefix)
+
   def get_prefixed_point_size(sequence_example, prefix):
     return get_bbox_point_y_size(sequence_example, prefix=prefix)
+
   def has_prefixed_point(sequence_example, prefix):
     return has_bbox_point_y(sequence_example, prefix=prefix)
+
   def clear_prefixed_point(sequence_example, prefix):
     clear_bbox_point_y(sequence_example, prefix=prefix)
     clear_bbox_point_x(sequence_example, prefix=prefix)
+
   def get_prefixed_3d_point_at(index, sequence_example, prefix):
     return np.stack((
         get_bbox_3d_point_x_at(index, sequence_example, prefix=prefix),
         get_bbox_3d_point_y_at(index, sequence_example, prefix=prefix),
         get_bbox_3d_point_z_at(index, sequence_example, prefix=prefix)),
                     1)
+
   def add_prefixed_3d_point(values, sequence_example, prefix):
     add_bbox_3d_point_x(values[:, 0], sequence_example, prefix=prefix)
     add_bbox_3d_point_y(values[:, 1], sequence_example, prefix=prefix)
     add_bbox_3d_point_z(values[:, 2], sequence_example, prefix=prefix)
+
   def get_prefixed_3d_point_size(sequence_example, prefix):
     return get_bbox_3d_point_x_size(sequence_example, prefix=prefix)
+
   def has_prefixed_3d_point(sequence_example, prefix):
     return has_bbox_3d_point_x(sequence_example, prefix=prefix)
+
   def clear_prefixed_3d_point(sequence_example, prefix):
     clear_bbox_3d_point_x(sequence_example, prefix=prefix)
     clear_bbox_3d_point_y(sequence_example, prefix=prefix)
     clear_bbox_3d_point_z(sequence_example, prefix=prefix)
+
   # pylint: enable=undefined-variable
-  msu.add_functions_to_module({
-      "get_" + name + "_at":
+  msu.add_functions_to_module(
+      {
+          f"get_{name}_at":
           msu.function_with_default(get_prefixed_bbox_at, prefix),
-      "add_" + name:
+          f"add_{name}":
           msu.function_with_default(add_prefixed_bbox, prefix),
-      "get_" + name + "_size":
+          f"get_{name}_size":
           msu.function_with_default(get_prefixed_bbox_size, prefix),
-      "has_" + name:
+          f"has_{name}":
           msu.function_with_default(has_prefixed_bbox, prefix),
-      "clear_" + name:
+          f"clear_{name}":
           msu.function_with_default(clear_prefixed_bbox, prefix),
-  }, module_dict=globals())
-  msu.add_functions_to_module({
-      "get_" + name + "_point_at":
+      },
+      module_dict=globals(),
+  )
+  msu.add_functions_to_module(
+      {
+          f"get_{name}_point_at":
           msu.function_with_default(get_prefixed_point_at, prefix),
-      "add_" + name + "_point":
+          f"add_{name}_point":
           msu.function_with_default(add_prefixed_point, prefix),
-      "get_" + name + "_point_size":
+          f"get_{name}_point_size":
           msu.function_with_default(get_prefixed_point_size, prefix),
-      "has_" + name + "_point":
+          f"has_{name}_point":
           msu.function_with_default(has_prefixed_point, prefix),
-      "clear_" + name + "_point":
+          f"clear_{name}_point":
           msu.function_with_default(clear_prefixed_point, prefix),
-  }, module_dict=globals())
-  msu.add_functions_to_module({
-      "get_" + name + "_3d_point_at":
+      },
+      module_dict=globals(),
+  )
+  msu.add_functions_to_module(
+      {
+          f"get_{name}_3d_point_at":
           msu.function_with_default(get_prefixed_3d_point_at, prefix),
-      "add_" + name + "_3d_point":
+          f"add_{name}_3d_point":
           msu.function_with_default(add_prefixed_3d_point, prefix),
-      "get_" + name + "_3d_point_size":
+          f"get_{name}_3d_point_size":
           msu.function_with_default(get_prefixed_3d_point_size, prefix),
-      "has_" + name + "_3d_point":
+          f"has_{name}_3d_point":
           msu.function_with_default(has_prefixed_3d_point, prefix),
-      "clear_" + name + "_3d_point":
+          f"clear_{name}_3d_point":
           msu.function_with_default(clear_prefixed_3d_point, prefix),
-  }, module_dict=globals())
+      },
+      module_dict=globals(),
+  )
 
 
 PREDICTED_PREFIX = "PREDICTED"

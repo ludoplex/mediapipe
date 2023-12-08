@@ -92,7 +92,7 @@ class Preprocessor(object):
 
     # Get original image.
     image = data['image']
-    image_shape = tf.shape(input=image)[0:2]
+    image_shape = tf.shape(input=image)[:2]
 
     # Normalize image with mean and std pixel values.
     image = preprocess_ops.normalize_image(
@@ -165,5 +165,5 @@ class Preprocessor(object):
       groundtruths = utils.pad_groundtruths_to_fixed_size(
           groundtruths, self._max_num_instances
       )
-      labels.update({'groundtruths': groundtruths})
+      labels['groundtruths'] = groundtruths
     return image, labels

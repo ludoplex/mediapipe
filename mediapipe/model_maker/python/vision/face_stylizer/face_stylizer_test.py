@@ -30,8 +30,7 @@ class FaceStylizerTest(tf.test.TestCase):
         'input/style/cartoon/cartoon.jpg'
     )
 
-    data = face_stylizer.Dataset.from_image(filename=input_style_image_file)
-    return data
+    return face_stylizer.Dataset.from_image(filename=input_style_image_file)
 
   def _create_eval_dataset(self):
     """Create evaluation dataset."""
@@ -39,8 +38,7 @@ class FaceStylizerTest(tf.test.TestCase):
         'input/raw/face/portrait.jpg'
     )
 
-    data = face_stylizer.Dataset.from_image(filename=input_test_image_file)
-    return data
+    return face_stylizer.Dataset.from_image(filename=input_test_image_file)
 
   def _evaluate_saved_model(self, model: face_stylizer.FaceStylizer):
     """Evaluates the fine-tuned face stylizer model."""
@@ -100,11 +98,11 @@ class FaceStylizerTest(tf.test.TestCase):
       with zipfile.ZipFile(model_bundle_file) as zf:
         self.assertEqual(
             set(zf.namelist()),
-            set([
+            {
                 'face_detector.tflite',
                 'face_landmarks_detector.tflite',
                 'face_stylizer.tflite',
-            ]),
+            },
         )
         zf.extractall(self.get_temp_dir())
 

@@ -48,7 +48,8 @@ class MetadataWriterTest(tf.test.TestCase):
     with zipfile.ZipFile(model_bundle_filepath) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set(["hand_landmarks_detector.tflite", "hand_detector.tflite"]))
+          {"hand_landmarks_detector.tflite", "hand_detector.tflite"},
+      )
 
   def test_write_metadata_and_create_model_asset_bundle_successful(self):
     # Use dummy model buffer for unit test only.
@@ -81,7 +82,8 @@ class MetadataWriterTest(tf.test.TestCase):
     with zipfile.ZipFile(model_bundle_filepath) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set(["hand_landmarker.task", "hand_gesture_recognizer.task"]))
+          {"hand_landmarker.task", "hand_gesture_recognizer.task"},
+      )
       zf.extractall(self.get_temp_dir())
 
     # Checks the model bundles for sub-task can be extracted successfully.
@@ -90,17 +92,20 @@ class MetadataWriterTest(tf.test.TestCase):
     with zipfile.ZipFile(hand_landmarker_bundle_filepath) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set(["hand_landmarks_detector.tflite", "hand_detector.tflite"]))
+          {"hand_landmarks_detector.tflite", "hand_detector.tflite"},
+      )
 
     hand_gesture_recognizer_bundle_filepath = os.path.join(
         self.get_temp_dir(), "hand_gesture_recognizer.task")
     with zipfile.ZipFile(hand_gesture_recognizer_bundle_filepath) as zf:
       self.assertEqual(
           set(zf.namelist()),
-          set([
+          {
               "canned_gesture_classifier.tflite",
-              "custom_gesture_classifier.tflite", "gesture_embedder.tflite"
-          ]))
+              "custom_gesture_classifier.tflite",
+              "gesture_embedder.tflite",
+          },
+      )
 
 
 if __name__ == "__main__":

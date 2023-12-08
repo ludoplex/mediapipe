@@ -107,7 +107,7 @@ class Dataset(classification_dataset.ClassificationDataset):
     if shuffle:
       random.shuffle(lines)
 
-    label_names = sorted(set([line[csv_params.label_column] for line in lines]))
+    label_names = sorted({line[csv_params.label_column] for line in lines})
     index_by_label = {label: index for index, label in enumerate(label_names)}
 
     texts = [line[csv_params.text_column] for line in lines]

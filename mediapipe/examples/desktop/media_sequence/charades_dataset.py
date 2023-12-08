@@ -223,7 +223,7 @@ class Charades(object):
     if split not in SPLITS:
       raise ValueError("Split %s not in %s" % split, str(list(SPLITS.keys())))
     all_shards = tf.io.gfile.glob(
-        os.path.join(self.path_to_data, SPLITS[split][0] + "-*-of-*"))
+        os.path.join(self.path_to_data, f"{SPLITS[split][0]}-*-of-*"))
     random.shuffle(all_shards)
     all_shards_dataset = tf.data.Dataset.from_tensor_slices(all_shards)
     cycle_length = min(16, len(all_shards))
@@ -302,7 +302,7 @@ class Charades(object):
       reader = csv.DictReader(annotations)
       for row in reader:
         metadata = tf.train.SequenceExample()
-        filepath = os.path.join(video_dir, "%s.mp4" % row["id"])
+        filepath = os.path.join(video_dir, f'{row["id"]}.mp4')
         actions = row["actions"].split(";")
         action_indices = []
         action_strings = []
@@ -329,10 +329,7 @@ class Charades(object):
 
   def _download_data(self):
     """Downloads and extracts data if not already available."""
-    if sys.version_info >= (3, 0):
-      urlretrieve = urllib.request.urlretrieve
-    else:
-      urlretrieve = urllib.request.urlretrieve
+    urlretrieve = urllib.request.urlretrieve
     logging.info("Creating data directory.")
     tf.io.gfile.makedirs(self.path_to_data)
     logging.info("Downloading license.")
@@ -382,10 +379,12 @@ class Charades(object):
       raise ValueError("--path_to_mediapipe_binary must be specified.")
     input_fd, input_filename = tempfile.mkstemp()
     output_fd, output_filename = tempfile.mkstemp()
-    cmd = [path_to_mediapipe_binary,
-           "--calculator_graph_config_file=%s" % graph,
-           "--input_side_packets=input_sequence_example=%s" % input_filename,
-           "--output_side_packets=output_sequence_example=%s" % output_filename]
+    cmd = [
+        path_to_mediapipe_binary,
+        f"--calculator_graph_config_file={graph}",
+        f"--input_side_packets=input_sequence_example={input_filename}",
+        f"--output_side_packets=output_sequence_example={output_filename}",
+    ]
     with open(input_filename, "wb") as input_file:
       input_file.write(sequence_example.SerializeToString())
     mediapipe_output = subprocess.check_output(cmd)
@@ -472,8 +471,7 @@ def timepoint_classification_target(segments, segment_classes, num_classes):
       tf.ones(shape=[1, 1], dtype=tf.float32) / tf.to_float(num_segments),
       tf.ones(shape=[1, num_classes - 1], dtype=tf.float32)
   ], 1)
-  corrected_one_hot = tf.floor(one_hot * normalizer)
-  return corrected_one_hot
+  return tf.floor(one_hot * normalizer)
 
 
 def progress_hook(blocks, block_size, total_size):
@@ -483,10 +481,7 @@ def progress_hook(blocks, block_size, total_size):
 
 def bytes23(string):
   """Creates a bytes string in either Python 2 or  3."""
-  if sys.version_info >= (3, 0):
-    return bytes(string, "utf8")
-  else:
-    return bytes(string)
+  return bytes(string, "utf8") if sys.version_info >= (3, 0) else bytes(string)
 
 
 @contextlib.contextmanager

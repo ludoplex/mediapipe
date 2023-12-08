@@ -28,10 +28,10 @@ def download_oss_model(model_path: str):
   if os.path.exists(model_abspath):
     return
   model_url = _GCS_URL_PREFIX + model_path.split('/')[-1]
-  print('Downloading model to ' + model_abspath)
-  with urllib.request.urlopen(model_url) as response, open(model_abspath,
-                                                           'wb') as out_file:
+  print(f'Downloading model to {model_abspath}')
+  with (urllib.request.urlopen(model_url) as response, open(model_abspath,
+                                                             'wb') as out_file):
     if response.code != 200:
-      raise ConnectionError('Cannot download ' + model_path +
-                            ' from Google Cloud Storage.')
+      raise ConnectionError(
+          f'Cannot download {model_path} from Google Cloud Storage.')
     shutil.copyfileobj(response, out_file)

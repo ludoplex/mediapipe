@@ -38,8 +38,8 @@ def main(argv):
 
     with tf.Session() as sess:
       images_, labels_ = sess.run([images, labels])
-    print('The shape of images_ is %s' % str(images_.shape))  # pylint: disable=superfluous-parens
-    print('The shape of labels_ is %s' % str(labels_.shape))  # pylint: disable=superfluous-parens
+    print(f'The shape of images_ is {str(images_.shape)}')
+    print(f'The shape of labels_ is {str(labels_.shape)}')
 
 
 if __name__ == '__main__':

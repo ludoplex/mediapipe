@@ -105,9 +105,7 @@ class ImageSegmenterOptions:
   def to_pb2(self) -> _ImageSegmenterGraphOptionsProto:
     """Generates an ImageSegmenterOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
     segmenter_options_proto = _SegmenterOptionsProto()
     return _ImageSegmenterGraphOptionsProto(
         base_options=base_options_proto,

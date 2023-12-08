@@ -86,14 +86,14 @@ class PoseTest(parameterized.TestCase):
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=drawing_styles.get_default_pose_landmarks_style())
-    path = self._get_output_path('_frame_{}.png'.format(idx))
+    path = self._get_output_path(f'_frame_{idx}.png')
     cv2.imwrite(path, frame)
 
   def _annotate_segmentation(self, segmentation, expected_segmentation,
                              idx: int):
-    path = self._get_output_path('_segmentation_{}.png'.format(idx))
+    path = self._get_output_path(f'_segmentation_{idx}.png')
     self._segmentation_to_rgb(segmentation).save(path)
-    path = self._get_output_path('_segmentation_diff_{}.png'.format(idx))
+    path = self._get_output_path(f'_segmentation_diff_{idx}.png')
     self._segmentation_diff_to_rgb(
         expected_segmentation, segmentation).save(path)
 
@@ -121,10 +121,8 @@ class PoseTest(parameterized.TestCase):
     expected_dot = segm_expected * segm_expected
     actual_dot = segm_actual * segm_actual
     eps = np.finfo(np.float32).eps
-    result = intersection.sum() / (expected_dot.sum() +
-                                   actual_dot.sum() -
-                                   intersection.sum() + eps)
-    return result
+    return intersection.sum() / (expected_dot.sum() + actual_dot.sum() -
+                                 intersection.sum() + eps)
 
   def _segmentation_diff_to_rgb(self, segm_expected, segm_actual,
                                 expected_color=(0, 255, 0),
@@ -196,7 +194,7 @@ class PoseTest(parameterized.TestCase):
     video_path = os.path.join(os.path.dirname(__file__),
                               'testdata/pose_squats.mp4')
     expected_path = os.path.join(os.path.dirname(__file__),
-                                 'testdata/{}'.format(expected_name))
+                                 f'testdata/{expected_name}')
 
     # Predict pose landmarks for each frame.
     video_cap = cv2.VideoCapture(video_path)
@@ -243,17 +241,17 @@ class PoseTest(parameterized.TestCase):
 
     # Validate actual vs. expected landmarks.
     expected = np.load(expected_path)['predictions']
-    assert actual.shape == expected.shape, (
-        'Unexpected shape of predictions: {} instead of {}'.format(
-            actual.shape, expected.shape))
+    assert (
+        actual.shape == expected.shape
+    ), f'Unexpected shape of predictions: {actual.shape} instead of {expected.shape}'
     self._assert_diff_less(
         actual[..., :2], expected[..., :2], threshold=diff_threshold)
 
     # Validate actual vs. expected world landmarks.
     expected_world = np.load(expected_path)['predictions_world']
-    assert actual_world.shape == expected_world.shape, (
-        'Unexpected shape of world predictions: {} instead of {}'.format(
-            actual_world.shape, expected_world.shape))
+    assert (
+        actual_world.shape == expected_world.shape
+    ), f'Unexpected shape of world predictions: {actual_world.shape} instead of {expected_world.shape}'
     self._assert_diff_less(
         actual_world, expected_world, threshold=world_diff_threshold)
 

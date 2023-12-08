@@ -60,10 +60,10 @@ class Classifications:
   @doc_controls.do_not_generate_docs
   def create_from_pb2(cls, pb2_obj: _ClassificationsProto) -> 'Classifications':
     """Creates a `Classifications` object from the given protobuf object."""
-    categories = []
-    for classification in pb2_obj.classification_list.classification:
-      categories.append(
-          category_module.Category.create_from_pb2(classification))
+    categories = [
+        category_module.Category.create_from_pb2(classification)
+        for classification in pb2_obj.classification_list.classification
+    ]
     return Classifications(
         categories=categories,
         head_index=pb2_obj.head_index,

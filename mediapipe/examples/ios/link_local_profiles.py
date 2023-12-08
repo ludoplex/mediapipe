@@ -69,12 +69,12 @@ def configure_bundle_id_prefix(
   bundle_id_prefix = match.group(1)
   # The default value contains a *, which is an invalid character in bundle IDs.
   if "*" in bundle_id_prefix:
-    bundle_id_prefix = str(uuid.uuid4()) + ".mediapipe.examples"
+    bundle_id_prefix = f"{str(uuid.uuid4())}.mediapipe.examples"
     contents = contents[:match.start(1)] + bundle_id_prefix + contents[match
                                                                        .end(1):]
     with open(bundle_id_bzl, "w") as f:
       f.write(contents)
-    print("Set up a unique bundle ID prefix: " + bundle_id_prefix)
+    print(f"Set up a unique bundle ID prefix: {bundle_id_prefix}")
 
   return bundle_id_prefix
 

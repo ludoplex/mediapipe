@@ -75,7 +75,7 @@ class Dataset(classification_dataset.ClassificationDataset):
     image_name, ext_name = os.path.splitext(image_filename)
 
     if not ext_name.endswith(('.jpg', '.jpeg', '.png')):
-      raise ValueError('Unsupported image formats: %s' % ext_name)
+      raise ValueError(f'Unsupported image formats: {ext_name}')
 
     image_data = _preprocess_face_dataset([file_path])
     label_names = [image_name]

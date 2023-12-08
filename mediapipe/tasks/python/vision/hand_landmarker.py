@@ -172,40 +172,36 @@ def _build_landmarker_result(
 
   handedness_results = []
   for proto in handedness_proto_list:
-    handedness_categories = []
     handedness_classifications = classification_pb2.ClassificationList()
     handedness_classifications.MergeFrom(proto)
-    for handedness in handedness_classifications.classification:
-      handedness_categories.append(
-          category_module.Category(
-              index=handedness.index,
-              score=handedness.score,
-              display_name=handedness.display_name,
-              category_name=handedness.label,
-          )
-      )
+    handedness_categories = [
+        category_module.Category(
+            index=handedness.index,
+            score=handedness.score,
+            display_name=handedness.display_name,
+            category_name=handedness.label,
+        ) for handedness in handedness_classifications.classification
+    ]
     handedness_results.append(handedness_categories)
 
   hand_landmarks_results = []
   for proto in hand_landmarks_proto_list:
     hand_landmarks = landmark_pb2.NormalizedLandmarkList()
     hand_landmarks.MergeFrom(proto)
-    hand_landmarks_list = []
-    for hand_landmark in hand_landmarks.landmark:
-      hand_landmarks_list.append(
-          landmark_module.NormalizedLandmark.create_from_pb2(hand_landmark)
-      )
+    hand_landmarks_list = [
+        landmark_module.NormalizedLandmark.create_from_pb2(hand_landmark)
+        for hand_landmark in hand_landmarks.landmark
+    ]
     hand_landmarks_results.append(hand_landmarks_list)
 
   hand_world_landmarks_results = []
   for proto in hand_world_landmarks_proto_list:
     hand_world_landmarks = landmark_pb2.LandmarkList()
     hand_world_landmarks.MergeFrom(proto)
-    hand_world_landmarks_list = []
-    for hand_world_landmark in hand_world_landmarks.landmark:
-      hand_world_landmarks_list.append(
-          landmark_module.Landmark.create_from_pb2(hand_world_landmark)
-      )
+    hand_world_landmarks_list = [
+        landmark_module.Landmark.create_from_pb2(hand_world_landmark)
+        for hand_world_landmark in hand_world_landmarks.landmark
+    ]
     hand_world_landmarks_results.append(hand_world_landmarks_list)
 
   return HandLandmarkerResult(
@@ -253,9 +249,7 @@ class HandLandmarkerOptions:
   def to_pb2(self) -> _HandLandmarkerGraphOptionsProto:
     """Generates an HandLandmarkerGraphOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
 
     # Initialize the hand landmarker options from base options.
     hand_landmarker_options_proto = _HandLandmarkerGraphOptionsProto(

@@ -209,10 +209,7 @@ class MetadataPopulatorTest(MetadataTest):
           "The tokenizer type, {0}, is unsupported.".format(tokenizer_type))
 
   def _create_tempfiles(self, file_names):
-    tempfiles = []
-    for name in file_names:
-      tempfiles.append(self.create_tempfile(name).full_path)
-    return tempfiles
+    return [self.create_tempfile(name).full_path for name in file_names]
 
   def _create_model_meta_with_subgraph_meta(self, subgraph_meta):
     model_meta = _metadata_fb.ModelMetadataT()
@@ -729,7 +726,7 @@ class MetadataPopulatorTest(MetadataTest):
     # The recorded file name in metadata should only contain file basename; file
     # directory should not be included.
     recorded_files = populator.get_recorded_associated_file_list()
-    self.assertEqual(set(recorded_files), set([os.path.basename(self._file1)]))
+    self.assertEqual(set(recorded_files), {os.path.basename(self._file1)})
 
 
 class MetadataDisplayerTest(MetadataTest):
@@ -824,8 +821,9 @@ class MetadataDisplayerTest(MetadataTest):
     with self.assertRaises(ValueError) as error:
       displayer.get_associated_file_buffer(non_existent_file)
     self.assertEqual(
-        "The file, {}, does not exist in the model.".format(non_existent_file),
-        str(error.exception))
+        f"The file, {non_existent_file}, does not exist in the model.",
+        str(error.exception),
+    )
 
   def testGetMetadataBufferShouldSucceed(self):
     displayer = _metadata.MetadataDisplayer.with_model_file(

@@ -57,12 +57,10 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
       parsed_params = parse.urlparse(self.path)
       url_params = parse.parse_qs(parsed_params.query)
 
-      tfrecord_path = ""
       segment_size = 5
 
       print(url_params)
-      if "file" in url_params:
-        tfrecord_path = url_params["file"][0]
+      tfrecord_path = url_params["file"][0] if "file" in url_params else ""
       if "segments" in url_params:
         segment_size = int(url_params["segments"][0])
 
@@ -72,7 +70,7 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
       if self.path == "/":
         self.path = "/index.html"
       # Default to serve up a local file
-      self.path = "/static" + self.path
+      self.path = f"/static{self.path}"
       http.server.SimpleHTTPRequestHandler.do_GET(self)
 
   def report_error(self, msg):
@@ -90,10 +88,10 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
     accumulate = ""
     for file_path in files:
       if not os.path.exists(file_path):
-        accumulate = "%s '%s'" % (accumulate, file_path)
+        accumulate = f"{accumulate} '{file_path}'"
 
     if accumulate:
-      self.report_error("Could not find:%s" % accumulate)
+      self.report_error(f"Could not find:{accumulate}")
       return True
 
     return False
@@ -103,11 +101,11 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     print("Received request.  File=", path, "Segment Size =", segment_size)
 
-    if (self.report_missing_files([
-        "%s/%s" % (FLAGS.root, FLAGS.pbtxt),
-        "%s/%s" % (FLAGS.root, FLAGS.binary),
-        "%s/%s" % (FLAGS.root, FLAGS.label_map)
-    ])):
+    if self.report_missing_files([
+        f"{FLAGS.root}/{FLAGS.pbtxt}",
+        f"{FLAGS.root}/{FLAGS.binary}",
+        f"{FLAGS.root}/{FLAGS.label_map}",
+    ]):
       return
 
     # Parse the youtube video id off the end of the link or as a standalone id.
@@ -127,43 +125,45 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     print("TFRecord discovered: ", filename, ", index", index)
 
-    output_file = r"%s/%s" % (FLAGS.tmp_dir, filename)
-    tfrecord_url = r"http://us.data.yt8m.org/2/frame/train/%s" % filename
+    output_file = f"{FLAGS.tmp_dir}/{filename}"
+    tfrecord_url = f"http://us.data.yt8m.org/2/frame/train/{filename}"
 
     connection = http.client.HTTPConnection("us.data.yt8m.org")
-    connection.request("HEAD",
-                       filename_match.expand(r"/2/frame/train/%s" % filename))
+    connection.request("HEAD", filename_match.expand(f"/2/frame/train/{filename}"))
     response = connection.getresponse()
     if response.getheader("Content-Type") != "application/octet-stream":
-      self.report_error("Filename '%s' is invalid." % path)
+      self.report_error(f"Filename '{path}' is invalid.")
 
     print(output_file, "exists on yt8m.org. Did we fetch this before?")
 
     if not os.path.exists(output_file):
       print(output_file, "doesn't exist locally, download it now.")
-      return_code = subprocess.call(
+      if return_code := subprocess.call(
           ["curl", "--output", output_file, tfrecord_url],
           stdout=subprocess.PIPE,
-          stderr=subprocess.PIPE)
-      if return_code:
-        self.report_error("Could not retrieve contents from %s" % tfrecord_url)
+          stderr=subprocess.PIPE,
+      ):
+        self.report_error(f"Could not retrieve contents from {tfrecord_url}")
         return
     else:
       print(output_file, "exist locally, reuse it.")
 
     print("Run the graph...")
-    process = subprocess.Popen([
-        "%s/%s" % (FLAGS.root, FLAGS.binary),
-        "--calculator_graph_config_file=%s/%s" % (FLAGS.root, FLAGS.pbtxt),
-        "--input_side_packets=tfrecord_path=%s" % output_file +
-        ",record_index=%d" % index + ",desired_segment_size=%d" % segment_size,
-        "--output_stream=annotation_summary",
-        "--output_stream_file=%s/labels" % FLAGS.tmp_dir,
-        "--output_side_packets=yt8m_id",
-        "--output_side_packets_file=%s/yt8m_id" % FLAGS.tmp_dir
-    ],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+    process = subprocess.Popen(
+        [
+            f"{FLAGS.root}/{FLAGS.binary}",
+            f"--calculator_graph_config_file={FLAGS.root}/{FLAGS.pbtxt}",
+            ((f"--input_side_packets=tfrecord_path={output_file}" +
+              ",record_index=%d" % index) +
+             ",desired_segment_size=%d" % segment_size),
+            "--output_stream=annotation_summary",
+            f"--output_stream_file={FLAGS.tmp_dir}/labels",
+            "--output_side_packets=yt8m_id",
+            f"--output_side_packets_file={FLAGS.tmp_dir}/yt8m_id",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
     stdout_str, stderr_str = process.communicate()
     process.wait()
 
@@ -171,12 +171,11 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
       self.report_error("Error executing server binary: \n%s" % stderr_str)
       return
 
-    f = open("%s/yt8m_id" % FLAGS.tmp_dir, "r")
+    f = open(f"{FLAGS.tmp_dir}/yt8m_id", "r")
     contents = f.read()
     print("yt8m_id is", contents[-5:-1])
 
-    curl_arg = "data.yt8m.org/2/j/i/%s/%s.js" % (contents[-5:-3],
-                                                 contents[-5:-1])
+    curl_arg = f"data.yt8m.org/2/j/i/{contents[-5:-3]}/{contents[-5:-1]}.js"
     print("Grab labels from", curl_arg)
     process = subprocess.Popen(["curl", curl_arg],
                                stdout=subprocess.PIPE,
@@ -189,14 +188,14 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
     match = re.match(""".+"([^"]+)"[^"]+""", stdout_str)
     final_results = {
         "video_id": match.group(1),
-        "link": "https://www.youtube.com/watch?v=%s" % match.group(1),
-        "entries": []
+        "link": f"https://www.youtube.com/watch?v={match.group(1)}",
+        "entries": [],
     }
-    f = open("%s/labels" % FLAGS.tmp_dir, "r")
+    f = open(f"{FLAGS.tmp_dir}/labels", "r")
     lines = f.readlines()
     show_at_center = FLAGS.show_label_at_center
 
-    print("%s/labels" % FLAGS.tmp_dir, "holds", len(lines), "entries")
+    print(f"{FLAGS.tmp_dir}/labels", "holds", len(lines), "entries")
     for line in lines:
       entry = {"labels": []}
       final_results["entries"].append(entry)
@@ -206,23 +205,21 @@ class Youtube8MRequestHandler(http.server.SimpleHTTPRequestHandler):
           subtract = segment_size / 2.0 if show_at_center else 0.0
           entry["time"] = float(int(column)) / 1000000.0 - subtract
           first = False
+        elif label_score := re.match("(.+):([0-9.]+).*", column):
+          score = float(label_score.group(2))
+          entry["labels"].append({
+              "label": label_score.group(1),
+              "score": score
+          })
         else:
-          label_score = re.match("(.+):([0-9.]+).*", column)
-          if label_score:
-            score = float(label_score.group(2))
-            entry["labels"].append({
-                "label": label_score.group(1),
-                "score": score
-            })
-          else:
-            print("empty score")
+          print("empty score")
 
     response_json = json.dumps(final_results, indent=2, separators=(",", ": "))
     self.send_response(200)
     self.send_header("Content-type", "application/json")
     self.end_headers()
     if sys.version_info[0] < 3:
-      self.wfile.write(str(response_json).encode("utf-8"))
+      self.wfile.write(response_json.encode("utf-8"))
     else:
       self.wfile.write(bytes(response_json, "utf-8"))
 
@@ -231,13 +228,13 @@ def update_pbtxt():
   """Update graph.pbtxt to use full path to label_map.txt."""
   edited_line = ""
   lines = []
-  with open("%s/%s" % (FLAGS.root, FLAGS.pbtxt), "r") as f:
+  with open(f"{FLAGS.root}/{FLAGS.pbtxt}", "r") as f:
     lines = f.readlines()
     for line in lines:
       if "label_map_path" in line:
         kv = line.split(":")
         edited_line = kv[0] + (": \"%s/%s\"\n" % (FLAGS.root, FLAGS.label_map))
-  with open("%s/%s" % (FLAGS.root, FLAGS.pbtxt), "w") as f:
+  with open(f"{FLAGS.root}/{FLAGS.pbtxt}", "w") as f:
     for line in lines:
       if "label_map_path" in line:
         f.write(edited_line)
@@ -253,7 +250,7 @@ def main(unused_args):
     return
   update_pbtxt()
   port = FLAGS.port
-  print("Listening on port %s" % port)  # pylint: disable=superfluous-parens
+  print(f"Listening on port {port}")
   server = HTTPServerV6(("::", int(port)), Youtube8MRequestHandler)
   server.serve_forever()
 

@@ -107,13 +107,11 @@ class QuantizationConfig(object):
     if inference_input_type is not None and inference_input_type not in {
         tf.float32, tf.uint8, tf.int8
     }:
-      raise ValueError('Unsupported inference_input_type %s' %
-                       inference_input_type)
+      raise ValueError(f'Unsupported inference_input_type {inference_input_type}')
     if inference_output_type is not None and inference_output_type not in {
         tf.float32, tf.uint8, tf.int8
     }:
-      raise ValueError('Unsupported inference_output_type %s' %
-                       inference_output_type)
+      raise ValueError(f'Unsupported inference_output_type {inference_output_type}')
 
     if optimizations is None:
       optimizations = [tf.lite.Optimize.DEFAULT]

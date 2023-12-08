@@ -595,9 +595,7 @@ class InputTextTensorMd(TensorMd):
 
 def _get_file_paths(files: List[_metadata_fb.AssociatedFileT]) -> List[str]:
   """Gets file paths from a list of associated files."""
-  if not files:
-    return []
-  return [file.name for file in files]
+  return [] if not files else [file.name for file in files]
 
 
 def _get_tokenizer_associated_files(
@@ -714,10 +712,7 @@ class BertInputTensorsMd:
   def create_input_process_unit_metadata(
       self) -> List[_metadata_fb.ProcessUnitT]:
     """Creates the input process unit metadata."""
-    if self._tokenizer_md:
-      return [self._tokenizer_md.create_metadata()]
-    else:
-      return []
+    return [self._tokenizer_md.create_metadata()] if self._tokenizer_md else []
 
   def get_tokenizer_associated_files(self) -> List[str]:
     """Gets the associated files that are packed in the tokenizer."""
@@ -995,8 +990,7 @@ class DetectionOutputTensorsMd:
     self._output_mds = [location_md, category_md, score_md, number_md]
     if len(self._output_mds) != len(tensor_indices_and_names):
       raise ValueError(
-          "The size of TFLite output should be " + str(len(self._output_mds))
-      )
+          f"The size of TFLite output should be {len(self._output_mds)}")
     for i, output_md in enumerate(self._output_mds):
       output_md.tensor_name = tensor_indices_and_names[i][1]
 
@@ -1073,8 +1067,7 @@ class RawDetectionOutputTensorsMd:
 
     if len(self._output_mds) != len(tensor_indices_and_names):
       raise ValueError(
-          "The size of TFLite output should be " + str(len(self._output_mds))
-      )
+          f"The size of TFLite output should be {len(self._output_mds)}")
     for i, output_md in enumerate(self._output_mds):
       output_md.tensor_name = tensor_indices_and_names[i][1]
 

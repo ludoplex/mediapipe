@@ -327,14 +327,13 @@ class ObjectDetector(classifier.Classifier):
             'Exporting with custom post-training-quantization: ',
             quantization_config,
         )
+    elif self._is_qat:
+      print('Exporting a qat int8 model')
+      quantization_config = quantization.QuantizationConfig(
+          inference_input_type=tf.uint8, inference_output_type=tf.uint8
+      )
     else:
-      if self._is_qat:
-        print('Exporting a qat int8 model')
-        quantization_config = quantization.QuantizationConfig(
-            inference_input_type=tf.uint8, inference_output_type=tf.uint8
-        )
-      else:
-        print('Exporting a floating point model')
+      print('Exporting a floating point model')
 
     tflite_file = os.path.join(self._hparams.export_dir, model_name)
     metadata_file = os.path.join(self._hparams.export_dir, 'metadata.json')
@@ -355,9 +354,7 @@ class ObjectDetector(classifier.Classifier):
     anchors = []
     for _, anchor_boxes in raw_anchor_boxes.items():
       anchor_boxes_reshaped = anchor_boxes.numpy().reshape((-1, 4))
-      for ab in anchor_boxes_reshaped:
-        anchors.append(self._create_fixed_anchor(ab))
-
+      anchors.extend(self._create_fixed_anchor(ab) for ab in anchor_boxes_reshaped)
     ssd_anchors_options = object_detector_writer.SsdAnchorsOptions(
         object_detector_writer.FixedAnchorsSchema(anchors)
     )

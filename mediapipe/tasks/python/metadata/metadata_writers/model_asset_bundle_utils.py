@@ -32,24 +32,18 @@ class AlignZipFile(zipfile.ZipFile):
     self._alignment = alignment
 
   def _writecheck(self, zinfo: zipfile.ZipInfo) -> None:
-    # Aligned the uncompressed files.
-    if zinfo.compress_type == zipfile.ZIP_STORED:
-      offset = self.fp.tell()
-      header_length = len(zinfo.FileHeader())
-      padding_length = (
-          self._alignment - (offset + header_length) % self._alignment
-      )
-      if padding_length:
-        offset += padding_length
-        self.fp.write(b"\x00" * padding_length)
-        assert self.fp.tell() == offset
-        zinfo.header_offset = offset
-    else:
+    if zinfo.compress_type != zipfile.ZIP_STORED:
       raise ValueError(
-          "Only support the uncompressed file (compress_type =="
-          " zipfile.ZIP_STORED) in zip. The current file compress type is "
-          + str(zinfo.compress_type)
+          f"Only support the uncompressed file (compress_type == zipfile.ZIP_STORED) in zip. The current file compress type is {str(zinfo.compress_type)}"
       )
+    offset = self.fp.tell()
+    header_length = len(zinfo.FileHeader())
+    if padding_length := (self._alignment -
+                          (offset + header_length) % self._alignment):
+      offset += padding_length
+      self.fp.write(b"\x00" * padding_length)
+      assert self.fp.tell() == offset
+      zinfo.header_offset = offset
     super()._writecheck(zinfo)
 
 

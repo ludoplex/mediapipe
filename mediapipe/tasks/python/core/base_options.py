@@ -74,8 +74,7 @@ class BaseOptions:
         acceleration_proto = _AccelerationProto(gpu=_DelegateProto.Gpu())
       else:
         raise NotImplementedError(
-            'GPU Delegate is not yet supported for ' + platform_name
-        )
+            f'GPU Delegate is not yet supported for {platform_name}')
     elif self.delegate == BaseOptions.Delegate.CPU:
       acceleration_proto = _AccelerationProto(tflite=_DelegateProto.TfLite())
     else:

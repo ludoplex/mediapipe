@@ -49,10 +49,7 @@ def add_functions_to_module(function_dict, module_dict=None):
 
 
 def merge_prefix(prefix, key):
-  if prefix:
-    return "/".join((prefix, key))
-  else:
-    return key
+  return "/".join((prefix, key)) if prefix else key
 
 
 def has_context(key, sequence, prefix=""):
@@ -232,12 +229,12 @@ def create_bytes_list_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.string)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -280,12 +277,12 @@ def create_float_list_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.float32)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -328,12 +325,12 @@ def create_int_list_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.int64)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -376,12 +373,12 @@ def create_bytes_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenFeature((), tf.string)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -424,12 +421,12 @@ def create_float_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenFeature((), tf.float32)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -472,12 +469,12 @@ def create_int_context_feature(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenFeature((), tf.int64)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name: _get,
-      "clear_" + name: _clear,
-      "set_" + name: _set,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}": _get,
+      f"clear_{name}": _clear,
+      f"set_{name}": _set,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -524,13 +521,13 @@ def create_bytes_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenSequenceFeature((), tf.string)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -577,13 +574,13 @@ def create_float_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenSequenceFeature((), tf.float32)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -630,13 +627,13 @@ def create_int_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.FixedLenSequenceFeature((), tf.int64)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -683,13 +680,13 @@ def create_bytes_list_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.string)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -736,13 +733,13 @@ def create_float_list_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.float32)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)
 
@@ -789,12 +786,12 @@ def create_int_list_feature_list(name, key, prefix="", module_dict=None):
     return tf.io.VarLenFeature(tf.int64)
 
   function_dict = {
-      "has_" + name: _has,
-      "get_" + name + "_size": _get_size,
-      "get_" + name + "_at": _get_at,
-      "clear_" + name: _clear,
-      "add_" + name: _add,
-      "get_" + name + "_key": _get_key,
-      "get_" + name + "_default_parser": _get_default_parser,
+      f"has_{name}": _has,
+      f"get_{name}_size": _get_size,
+      f"get_{name}_at": _get_at,
+      f"clear_{name}": _clear,
+      f"add_{name}": _add,
+      f"get_{name}_key": _get_key,
+      f"get_{name}_default_parser": _get_default_parser,
   }
   add_functions_to_module(function_dict, module_dict)

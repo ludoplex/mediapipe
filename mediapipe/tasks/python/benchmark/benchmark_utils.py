@@ -43,8 +43,7 @@ def get_test_data_path(test_srcdir, file_or_dirname_path: str) -> str:
       if path.endswith(file_or_dirname_path):
         return path
   raise ValueError(
-      "No %s in test directory: %s." % (file_or_dirname_path, test_srcdir)
-  )
+      f"No {file_or_dirname_path} in test directory: {test_srcdir}.")
 
 
 def get_model_path(custom_model, default_model_path):

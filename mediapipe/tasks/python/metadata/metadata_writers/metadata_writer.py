@@ -261,7 +261,7 @@ class ScoreCalibration:
           parameters.append(None)
           continue
 
-        if len(row) != 3 and len(row) != 4:
+        if len(row) not in [3, 4]:
           raise ValueError(
               f'Expected empty lines or 3 or 4 parameters per line in score'
               f' calibration file, but got {len(row)}.')
@@ -305,14 +305,10 @@ def _pair_tensor_metadata(
   if collections.Counter(tensor_names_from_arg) != collections.Counter(
       tensor_names_from_model):
     raise ValueError(
-        'The tensor names from arguments ({}) do not match the tensor names'
-        ' read from the model ({}).'.format(tensor_names_from_arg,
-                                            tensor_names_from_model))
-  pairs_tensor_md = []
+        f'The tensor names from arguments ({tensor_names_from_arg}) do not match the tensor names read from the model ({tensor_names_from_model}).'
+    )
   name_md_dict = dict(zip(tensor_names_from_arg, tensor_md))
-  for name in tensor_names_from_model:
-    pairs_tensor_md.append(name_md_dict[name])
-  return pairs_tensor_md
+  return [name_md_dict[name] for name in tensor_names_from_model]
 
 
 def _create_metadata_buffer(
@@ -810,17 +806,12 @@ class MetadataWriter(object):
       self, labels: Optional[Labels] = None
   ) -> Optional[List[metadata_info.LabelFileMd]]:
     """Creates a list of LabelFileMd objects."""
-    label_files = None
-    if labels:
-      label_files = []
-      for item in labels.labels:
-        label_files.append(
-            metadata_info.LabelFileMd(
-                self._export_labels(item.filename, item.names),
-                locale=item.locale,
-            )
-        )
-    return label_files
+    return ([
+        metadata_info.LabelFileMd(
+            self._export_labels(item.filename, item.names),
+            locale=item.locale,
+        ) for item in labels.labels
+    ] if labels else None)
 
 
 class MetadataWriterBase:

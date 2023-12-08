@@ -26,13 +26,13 @@ def _get_preprocessed_image(preprocessor, is_training=False):
 
   with tf.compat.v1.Session() as sess:
     input_image = np.arange(24 * 24 * 3, dtype=np.uint8).reshape([24, 24, 3])
-    image = sess.run(
+    return sess.run(
         image_tensor,
         feed_dict={
             image_placeholder: input_image,
             label_placeholder: [0]
-        })
-    return image
+        },
+    )
 
 
 class PreprocessorTest(tf.test.TestCase):

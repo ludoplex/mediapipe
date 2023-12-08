@@ -51,7 +51,7 @@ def _maybe_open_as_binary(filename, mode):
   """Maybe open the binary file, and returns a file-like."""
   if hasattr(filename, "read"):  # A file-like has read().
     return filename
-  openmode = mode if "b" in mode else mode + "b"  # Add binary explicitly.
+  openmode = mode if "b" in mode else f"{mode}b"
   return _open_file(filename, openmode)
 
 
@@ -351,9 +351,7 @@ class MetadataPopulator(object):
       src_model_buf: source model buffer (in bytearray) with metadata and
         associated files.
     """
-    # Load the model metadata from src_model_buf if exist.
-    metadata_buffer = get_metadata_buffer(src_model_buf)
-    if metadata_buffer:
+    if metadata_buffer := get_metadata_buffer(src_model_buf):
       self.load_metadata_buffer(metadata_buffer)
 
     # Load the associated files from src_model_buf if exist.
@@ -465,12 +463,7 @@ class MetadataPopulator(object):
       A list of AssociatedFileT objects.
     """
 
-    if table is None:
-      return []
-
-    # If the associated file field is not populated,
-    # `getattr(table, field_name)` will be None. Return an empty list.
-    return getattr(table, field_name) or []
+    return [] if table is None else getattr(table, field_name) or []
 
   def _get_recorded_associated_file_object_list(self, metadata):
     """Gets a list of AssociatedFileT objects recorded in the metadata.
@@ -590,10 +583,7 @@ class MetadataPopulator(object):
     b.Finish(model.Pack(b), self.TFLITE_FILE_IDENTIFIER)
     model_buf = b.Output()
 
-    # Saves the updated model buffer to model file.
-    # Gets files that have been packed to self._model_file.
-    packed_files = self.get_packed_associated_file_list()
-    if packed_files:
+    if packed_files := self.get_packed_associated_file_list():
       # Writes the updated model buffer and associated files into a new model
       # file (in memory). Then overwrites the original model file.
       with tempfile.SpooledTemporaryFile() as temp:
@@ -753,8 +743,7 @@ class MetadataDisplayer(object):
       ValueError: if the file does not exist in the model.
     """
     if filename not in self._associated_file_list:
-      raise ValueError(
-          "The file, {}, does not exist in the model.".format(filename))
+      raise ValueError(f"The file, {filename}, does not exist in the model.")
 
     with _open_as_zipfile(io.BytesIO(self._model_buffer)) as zf:
       return zf.read(filename)
@@ -843,7 +832,7 @@ def convert_to_json(
   with _open_file(_FLATC_TFLITE_METADATA_SCHEMA_FILE) as f:
     metadata_schema_content = f.read()
   if not parser.parse(metadata_schema_content):
-    raise ValueError("Cannot parse metadata schema. Reason: " + parser.error)
+    raise ValueError(f"Cannot parse metadata schema. Reason: {parser.error}")
   # Json content which may contain binary custom metadata.
   raw_json_content = _pywrap_flatbuffers.generate_text(parser, metadata_buffer)
   if not custom_metadata_schema:
@@ -864,8 +853,7 @@ def convert_to_json(
       custom_metadata_schema_content = f.read()
     if not parser.parse(custom_metadata_schema_content):
       raise ValueError(
-          "Cannot parse custom metadata schema. Reason: " + parser.error
-      )
+          f"Cannot parse custom metadata schema. Reason: {parser.error}")
     custom_metadata_json = _pywrap_flatbuffers.generate_text(
         parser, custom_metadata
     )

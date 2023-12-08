@@ -100,56 +100,50 @@ def _build_recognition_result(
 
   gesture_results = []
   for proto in gestures_proto_list:
-    gesture_categories = []
     gesture_classifications = classification_pb2.ClassificationList()
     gesture_classifications.MergeFrom(proto)
-    for gesture in gesture_classifications.classification:
-      gesture_categories.append(
-          category_module.Category(
-              index=_GESTURE_DEFAULT_INDEX,
-              score=gesture.score,
-              display_name=gesture.display_name,
-              category_name=gesture.label,
-          )
-      )
+    gesture_categories = [
+        category_module.Category(
+            index=_GESTURE_DEFAULT_INDEX,
+            score=gesture.score,
+            display_name=gesture.display_name,
+            category_name=gesture.label,
+        ) for gesture in gesture_classifications.classification
+    ]
     gesture_results.append(gesture_categories)
 
   handedness_results = []
   for proto in handedness_proto_list:
-    handedness_categories = []
     handedness_classifications = classification_pb2.ClassificationList()
     handedness_classifications.MergeFrom(proto)
-    for handedness in handedness_classifications.classification:
-      handedness_categories.append(
-          category_module.Category(
-              index=handedness.index,
-              score=handedness.score,
-              display_name=handedness.display_name,
-              category_name=handedness.label,
-          )
-      )
+    handedness_categories = [
+        category_module.Category(
+            index=handedness.index,
+            score=handedness.score,
+            display_name=handedness.display_name,
+            category_name=handedness.label,
+        ) for handedness in handedness_classifications.classification
+    ]
     handedness_results.append(handedness_categories)
 
   hand_landmarks_results = []
   for proto in hand_landmarks_proto_list:
     hand_landmarks = landmark_pb2.NormalizedLandmarkList()
     hand_landmarks.MergeFrom(proto)
-    hand_landmarks_list = []
-    for hand_landmark in hand_landmarks.landmark:
-      hand_landmarks_list.append(
-          landmark_module.NormalizedLandmark.create_from_pb2(hand_landmark)
-      )
+    hand_landmarks_list = [
+        landmark_module.NormalizedLandmark.create_from_pb2(hand_landmark)
+        for hand_landmark in hand_landmarks.landmark
+    ]
     hand_landmarks_results.append(hand_landmarks_list)
 
   hand_world_landmarks_results = []
   for proto in hand_world_landmarks_proto_list:
     hand_world_landmarks = landmark_pb2.LandmarkList()
     hand_world_landmarks.MergeFrom(proto)
-    hand_world_landmarks_list = []
-    for hand_world_landmark in hand_world_landmarks.landmark:
-      hand_world_landmarks_list.append(
-          landmark_module.Landmark.create_from_pb2(hand_world_landmark)
-      )
+    hand_world_landmarks_list = [
+        landmark_module.Landmark.create_from_pb2(hand_world_landmark)
+        for hand_world_landmark in hand_world_landmarks.landmark
+    ]
     hand_world_landmarks_results.append(hand_world_landmarks_list)
 
   return GestureRecognizerResult(
@@ -212,9 +206,7 @@ class GestureRecognizerOptions:
   def to_pb2(self) -> _GestureRecognizerGraphOptionsProto:
     """Generates an GestureRecognizerOptions protobuf object."""
     base_options_proto = self.base_options.to_pb2()
-    base_options_proto.use_stream_mode = (
-        False if self.running_mode == _RunningMode.IMAGE else True
-    )
+    base_options_proto.use_stream_mode = self.running_mode != _RunningMode.IMAGE
 
     # Initialize gesture recognizer options from base options.
     gesture_recognizer_options_proto = _GestureRecognizerGraphOptionsProto(

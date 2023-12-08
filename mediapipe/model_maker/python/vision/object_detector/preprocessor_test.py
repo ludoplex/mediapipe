@@ -62,8 +62,7 @@ class DatasetTest(tf.test.TestCase, parameterized.TestCase):
     dataset = [self._get_rand_example() for _ in range(self.NUM_EXAMPLES)]
 
     def my_generator(data):
-      for item in data:
-        yield item
+      yield from data
 
     self.dataset = tf.data.Dataset.from_generator(
         lambda: my_generator(dataset),
